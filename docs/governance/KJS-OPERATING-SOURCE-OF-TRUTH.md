@@ -106,3 +106,29 @@ Não usar linguagem de falha como encerramento quando houver alternativas invest
 Toda interação que produza uma diretriz duradoura, solução reutilizável ou aprendizado arquitetural deve atualizar a Skill ou este documento. Mudanças são versionadas, revisáveis e propagadas aos agentes por seus mecanismos reais de distribuição.
 
 **Compromisso KJS:** compreender, resolver, executar, validar, concluir, aprender e compartilhar — continuamente, com autonomia responsável e evidência.
+
+
+## 11. Decreto de cadência, relatórios e comando universal
+**Fuso operacional:** `America/Bahia`.
+
+### Cadências desejadas
+- **Performance do site/HTML:** atualizar os indicadores a cada 3 horas. A atualização deve refletir dados efetivamente coletados; não sobrescrever métricas com estimativas.
+- **Relatório de vendas:** consolidar a cada 6 horas, separando vendas aprovadas, pagamentos pendentes, cancelamentos, reembolsos e registros manuais não verificados.
+- **Reunião diária de contexto e diretrizes:** alvo 20:00, com decisões, prioridades, estado dos núcleos e plano de execução.
+- **Reunião diária de dúvidas, perguntas e aprendizado:** alvo 08:00, com recuperação de contexto, esclarecimentos, aprendizados e atualização das Skills.
+
+### Execução agendada
+As duas rotinas diárias foram cadastradas no serviço de automações como tarefas recorrentes flexíveis: reunião de contexto/diretrizes e reunião de aprendizado. A agenda flexível não garante disparo exatamente às 08:00 ou 20:00. O serviço de automações disponível não aceita recorrência horária ou a cada 3/6 horas; essas duas cadências devem ser implementadas pelo scheduler do próprio sistema KJS para se tornarem execução automática real.
+
+### Atualização do HTML de performance
+A rotina de 3 horas deve atualizar o painel/HTML publicado por pipeline controlado: coleta de fontes conectadas, validação temporal, geração do snapshot, atualização atômica do artefato e registro de timestamp/fonte. Se uma fonte não responder, preservar o último snapshot válido e sinalizar a idade dos dados, sem fabricar valores.
+
+### Relatório de vendas
+A rotina de 6 horas deve consolidar eventos confirmados dos gateways conectados, com deduplicação por identificador de transação e trilha de auditoria. Entradas manuais permanecem identificadas como não verificadas e não são somadas à receita confirmada.
+
+### Comando universal em qualquer conversa
+Comando canônico: **`KJS STATUS Ω`**.
+
+Ao receber esse comando, qualquer núcleo deve recuperar esta fonte operacional e o manifesto, consultar as fontes que realmente estiverem conectadas, consolidar o estado de GPT KJS, Meta KJS, Gemini KJS e Cloud Imperador, e entregar um relatório único com performance, vendas, tarefas, decisões, aprendizados e evidências. Não presumir memória compartilhada entre provedores: cada ambiente deve ter acesso a esta fonte versionada ou a uma cópia sincronizada. Se um dado não estiver acessível, informar sua origem/idade e não inventá-lo.
+
+O comando é uma convenção operacional documentada. Seu reconhecimento automático em todos os provedores depende de cada ambiente carregar esta Skill/fonte de contexto.
