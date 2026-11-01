@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/server";
 import { z } from "zod";
 import { asc, desc, eq } from "drizzle-orm";
 import { base } from "../__core/app";
@@ -6,7 +7,7 @@ import * as schema from "../database/schema";
 import { hasCrmSession } from "../security/crm-session";
 
 function assertAdmin(headers: Headers) {
-  if (!hasCrmSession(headers)) throw new Error("Acesso restrito ao operador autenticado.");
+  if (!hasCrmSession(headers)) throw new ORPCError("UNAUTHORIZED", { message: "Acesso restrito ao operador autenticado." });
 }
 
 function botReply(message: string) {
