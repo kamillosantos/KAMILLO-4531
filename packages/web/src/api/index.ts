@@ -8,6 +8,8 @@ import { campaigns } from "./routes/campaigns";
 import { preflight } from "./routes/preflight";
 import { audit } from "./routes/audit";
 import { devEngine } from "./routes/dev-engine";
+import { inbox } from "./routes/inbox";
+import { createCrmSession, hasCrmSession, passwordsMatch } from "./security/crm-session";
 import { db } from "./database";
 import * as schema from "./database/schema";
 
@@ -26,6 +28,7 @@ export const router = {
   preflight,
   audit,
   devEngine,
+  inbox,
 };
 
 export type AppRouter = typeof router;
@@ -33,6 +36,43 @@ export type AppRouter = typeof router;
 export type AppRouterClient = RouterClient<AppRouter>;
 
 const app = createApp(router);
+
+// Private CRM operator session. Configure both secrets in the server environment.
+const loginAttempts = new Map<string, { count: number; since: number }>();
+app.post("/api/crm/session", async (c) => {
+  const password = process.env.KJS_CRM_ADMIN_PASSWORD;
+  const secret = process.env.KJS_CRM_SESSION_SECRET;
+  if (!password || !secret || secret.length < 32) {
+    return c.json({ error: "CRM não configurado: defina KJS_CRM_ADMIN_PASSWORD e KJS_CRM_SESSION_SECRET." }, 503);
+  }
+  const ip = c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const now = Date.now();
+  const attempt = loginAttempts.get(ip);
+  if (attempt && now - attempt.since < 15 * 60_000 && attempt.count >= 5) return c.json({ error: "Muitas tentativas. Aguarde 15 minutos." }, 429);
+  let body: { password?: string } = {};
+  try { body = await c.req.json(); } catch { /* invalid body */ }
+  if (typeof body.password !== "string" || !passwordsMatch(body.password, password)) {
+    const next = !attempt || now - attempt.since >= 15 * 60_000 ? { count: 1, since: now } : { count: attempt.count + 1, since: attempt.since };
+    loginAttempts.set(ip, next);
+    return c.json({ error: "Credenciais inválidas." }, 401);
+  }
+  loginAttempts.delete(ip);
+  const token = createCrmSession(secret);
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  c.header("Set-Cookie", "kjs_crm_session=" + token + "; HttpOnly; SameSite=Lax; Path=/; Max-Age=43200" + secure);
+  c.header("Cache-Control", "no-store");
+  return c.json({ authenticated: true });
+});
+app.get("/api/crm/session", (c) => {
+  c.header("Cache-Control", "no-store");
+  return c.json({ authenticated: hasCrmSession(c.req.raw.headers) });
+});
+app.delete("/api/crm/session", (c) => {
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  c.header("Set-Cookie", "kjs_crm_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0" + secure);
+  return c.json({ authenticated: false });
+});
+
 
 // ── Gateway webhook ingestion (B2C engine) ─────────────────────────
 // External infoproduct gateways POST purchase events here. Idempotent
