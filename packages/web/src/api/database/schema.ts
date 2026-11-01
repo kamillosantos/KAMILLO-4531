@@ -120,6 +120,7 @@ export const crmConversations = sqliteTable("crm_conversations", {
   contactName: text("contact_name").notNull(),
   contact: text("contact").notNull(),
   channel: text("channel").notNull().default("web"),
+  consentRecorded: integer("consent_recorded", { mode: "boolean" }).notNull().default(false),
   status: text("status").notNull().default("bot"),
   assignedTo: text("assigned_to"),
   createdAt: integer("created_at", { mode: "timestamp" })
