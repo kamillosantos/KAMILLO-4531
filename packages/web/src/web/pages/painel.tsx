@@ -53,7 +53,7 @@ export default function PainelPage() {
             <strong className="text-[#e0e6ed]">KAMILLO IA</strong>
           </span>
           <span>
-            MODE: <strong className="text-[#00ff66]">AUTONOMOUS</strong>
+            MODE: <strong className="text-[#00ff66]">OPERACIONAL</strong>
           </span>
           <Link
             href="/"
@@ -96,7 +96,7 @@ export default function PainelPage() {
             <div className="text-[#606d80]">Stack soberana</div>
             <div className="mt-1 text-[#e0e6ed]">Bun · Hono · Drizzle · Turso</div>
             <div className="mt-2 text-[#606d80]">Persistência</div>
-            <div className="text-[#00ff66]">CRUD real · access control API</div>
+            <div className="text-amber-400">CRUD conectado · autenticação pendente de validação</div>
           </div>
         </aside>
 
