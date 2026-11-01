@@ -46,12 +46,12 @@ export const preflight = {
         .values({ ...input, verdict })
         .returning();
       await db.insert(schema.auditLogs).values({
-        action: "preflight_run",
+        action: "preflight_declaration",
         entity: "preflight",
         entityId: String(row.id),
-        actor: "roboavaliador",
-        details: `${row.domain} → ${verdict}`,
-        complianceFlag: verdict === "reprovado" ? "alert" : "ok",
+        actor: "painel_manual",
+        details: `${row.domain} → ${verdict} (dados declarados pelo operador; sem consulta DNS)`,
+        complianceFlag: "review",
       });
       return row;
     }),
