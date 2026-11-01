@@ -62,25 +62,25 @@ export function RevOps() {
       <SectionTitle
         icon={<Activity className="h-4 w-4" />}
         title="RevOps · Neural Bidding & Governança LGPD"
-        subtitle="ROAS consolidado, governança de campanhas e trilha de auditoria imutável."
+        subtitle="Campanhas e valores cadastrados no painel; ROAS calculado a partir dos valores informados, sem sincronização de plataformas."
         accent="purple"
       />
 
       <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat
-          label="ROAS consolidado"
+          label="ROAS calculado (manual)"
           value={`${(cStats?.roas ?? 0).toFixed(1)}x`}
           accent="green"
         />
         <Stat
-          label="Investimento"
+          label="Investimento informado"
           value={`R$ ${(cStats?.spend ?? 0).toLocaleString("pt-BR", {
             maximumFractionDigits: 0,
           })}`}
           accent="white"
         />
         <Stat
-          label="Campanhas ativas"
+          label="Campanhas cadastradas ativas"
           value={String(cStats?.active ?? 0)}
           accent="cyan"
         />
@@ -119,7 +119,7 @@ export function RevOps() {
                 ))}
               </select>
             </Field>
-            <Field label="Investimento (R$)">
+            <Field label="Investimento informado (R$)">
               <input
                 className={inputCls}
                 type="number"
@@ -127,7 +127,7 @@ export function RevOps() {
                 onChange={(e) => setForm({ ...form, spend: e.target.value })}
               />
             </Field>
-            <Field label="Receita (R$)">
+            <Field label="Receita informada (R$)">
               <input
                 className={inputCls}
                 type="number"
@@ -202,7 +202,7 @@ export function RevOps() {
 
         <Panel className="overflow-hidden">
           <div className="flex items-center gap-2 border-b border-[#1f242d] px-4 py-2 font-mono text-[10px] uppercase tracking-wider text-[#606d80]">
-            <ScrollText className="h-3.5 w-3.5" /> Trilha de auditoria (LGPD)
+            <ScrollText className="h-3.5 w-3.5" /> Eventos registrados (auditoria)
           </div>
           <div className="max-h-[380px] overflow-y-auto">
             {logs.map((l) => (
