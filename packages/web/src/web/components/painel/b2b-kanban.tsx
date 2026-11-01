@@ -5,8 +5,6 @@ import {
   ArrowRight,
   ArrowLeft,
   Trash2,
-  Bot,
-  Send,
 } from "lucide-react";
 import {
   useCrmList,
@@ -94,7 +92,7 @@ export function B2BKanban() {
       <SectionTitle
         icon={<Users className="h-4 w-4" />}
         title="Belgos AI · Demand Engine (B2B)"
-        subtitle="Pipeline autônomo de aquisição — do primeiro contato ao cliente ativo."
+        subtitle="Pipeline CRM B2B — registros persistidos e movimentações realizadas por usuários."
         accent="cyan"
       />
 
@@ -102,12 +100,13 @@ export function B2BKanban() {
         <Stat label="Leads no pipeline" value={String(leads.length)} accent="cyan" />
         <Stat label="Clientes (T-01)" value={String(clients)} accent="green" />
         <Stat
-          label="LTV previsto"
+          label="LTV projetado (informado)"
           value={`R$ ${pipelineLtv.toLocaleString("pt-BR")}`}
           accent="white"
+          hint="Soma dos valores estimados cadastrados nos leads."
         />
         <Stat
-          label="Conversão"
+          label="Participação T-01"
           value={`${leads.length ? Math.round((clients / leads.length) * 100) : 0}%`}
           accent="purple"
         />
@@ -268,76 +267,7 @@ export function B2BKanban() {
         ))}
       </div>
 
-      <SdrChat leadCount={leads.length} />
     </div>
   );
 }
 
-function SdrChat({ leadCount }: { leadCount: number }) {
-  const [messages, setMessages] = useState<
-    { role: "sdr" | "user"; text: string }[]
-  >([
-    {
-      role: "sdr",
-      text: `Belgos SDR online. Monitorando ${leadCount} lead(s) no pipeline. Pergunte sobre triagem, qualificação ou próximos passos.`,
-    },
-  ]);
-  const [input, setInput] = useState("");
-
-  function reply(q: string): string {
-    const t = q.toLowerCase();
-    if (t.includes("qualific"))
-      return "Critério de qualificação: score ≥ 40 + fit de ticket. Leads T-04 com score baixo entram em nutrição automática.";
-    if (t.includes("prioridade") || t.includes("prior"))
-      return "Priorize leads T-03 com LTV previsto alto — maior probabilidade de fechamento no ciclo atual.";
-    if (t.includes("onboarding") || t.includes("t-02"))
-      return "Em T-02, dispare o checklist de onboarding e agende o kickoff em até 48h para reduzir churn inicial.";
-    return "Recomendo revisar leads parados em T-03 há mais de 7 dias e reengajar via WhatsApp com prova social.";
-  }
-
-  function send(e: React.FormEvent) {
-    e.preventDefault();
-    if (!input.trim()) return;
-    const q = input.trim();
-    setMessages((m) => [
-      ...m,
-      { role: "user", text: q },
-      { role: "sdr", text: reply(q) },
-    ]);
-    setInput("");
-  }
-
-  return (
-    <Panel className="mt-6 p-4">
-      <div className="mb-3 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-[#00f0ff]">
-        <Bot className="h-4 w-4" /> SDR Triage · Belgos AI
-      </div>
-      <div className="mb-3 max-h-52 space-y-2 overflow-y-auto">
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className={`font-mono text-[11px] ${
-              m.role === "sdr" ? "text-[#00f0ff]" : "text-[#e0e6ed]"
-            }`}
-          >
-            <span className="text-[#3a4453]">
-              {m.role === "sdr" ? "SDR> " : "você> "}
-            </span>
-            {m.text}
-          </div>
-        ))}
-      </div>
-      <form onSubmit={send} className="flex gap-2">
-        <input
-          className={inputCls}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Pergunte à triagem…"
-        />
-        <Btn type="submit">
-          <Send className="h-3.5 w-3.5" />
-        </Btn>
-      </form>
-    </Panel>
-  );
-}
