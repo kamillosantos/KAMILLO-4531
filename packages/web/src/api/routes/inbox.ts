@@ -42,6 +42,7 @@ export const inbox = {
       contactName: z.string().min(2).max(120),
       contact: z.string().min(3).max(160),
       channel: z.enum(["web", "whatsapp", "instagram", "manual"]).default("manual"),
+      consentRecorded: z.literal(true),
     }))
     .handler(async ({ input, context }) => {
       assertAdmin(context.headers);
