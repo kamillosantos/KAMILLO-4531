@@ -76,24 +76,24 @@ export function DevEngine() {
     <div>
       <SectionTitle
         icon={<Code2 className="h-4 w-4" />}
-        title="Kamillo Dev Engine · Software Architecture"
-        subtitle="Validação de arquitetura corporativa (API-first, alta escala) com assinatura e trilha de auditoria."
+        title="Kamillo Dev Engine · Registro de Especificações"
+        subtitle="Registro das especificações enviadas; não representa arquitetura gerada nem auditoria criptográfica executada."
         accent="green"
       />
 
       <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Stat label="Projetos arquitetados" value={String(runs.length)} accent="green" />
-        <Stat label="Enterprise High" value={String(enterprise)} accent="cyan" />
+        <Stat label="Solicitações registradas" value={String(runs.length)} accent="green" />
+        <Stat label="Configuração Enterprise" value={String(enterprise)} accent="cyan" />
         <Stat
-          label="API-first ready"
+          label="Solicitações API-first"
           value={String(runs.filter((r) => r.apiFirstReady).length)}
           accent="white"
         />
         <Stat
           label="Assinatura"
-          value="VERIFIED"
+          value="NÃO VERIFICADA"
           accent="purple"
-          hint="BRADATA Software House"
+          hint="Sem validação criptográfica comprovada"
         />
       </div>
 
@@ -150,7 +150,7 @@ export function DevEngine() {
                   }
                 >
                   <option value="ENTERPRISE_HIGH">
-                    ENTERPRISE_HIGH (HMAC/JWT)
+                    ENTERPRISE_HIGH (não verificado)
                   </option>
                   <option value="STANDARD">STANDARD</option>
                 </select>
