@@ -70,11 +70,11 @@ export function B2CFunnel() {
       <SectionTitle
         icon={<Zap className="h-4 w-4" />}
         title="101X Funnel · Infoproduct Engine (B2C)"
-        subtitle="Ledger de checkouts multi-gateway — tripwire, bumps, upsells e maximização de AOV."
+        subtitle="Ledger de checkouts: somente eventos confirmados entram em receita; cadastros manuais ficam não verificados."
         accent="purple"
       />
 
-      <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-5">
         <Stat
           label="Receita aprovada"
           value={`R$ ${(stats?.revenue ?? 0).toLocaleString("pt-BR", {
@@ -84,11 +84,16 @@ export function B2CFunnel() {
         />
         <Stat label="Vendas aprovadas" value={String(stats?.approved ?? 0)} accent="cyan" />
         <Stat
-          label="Ticket médio (AOV)"
+          label="Ticket médio (aprovadas)"
           value={`R$ ${(stats?.aov ?? 0).toLocaleString("pt-BR", {
             maximumFractionDigits: 0,
           })}`}
           accent="white"
+        />
+        <Stat
+          label="Manuais não confirmados"
+          value={String(stats?.unverified ?? 0)}
+          accent="amber"
         />
         <Stat
           label="Order bumps + upsells"
@@ -101,7 +106,7 @@ export function B2CFunnel() {
 
       <Panel className="mb-5 p-4">
         <div className="mb-2 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-[#00f0ff]">
-          <Webhook className="h-4 w-4" /> Endpoints de webhook (ativos)
+          <Webhook className="h-4 w-4" /> Webhooks externos — ingestão suspensa
         </div>
         <div className="flex flex-wrap gap-2">
           {GATEWAYS.map((g) => (
@@ -109,13 +114,14 @@ export function B2CFunnel() {
               key={g}
               className="rounded border border-[#1f242d] bg-[#050505] px-2 py-1 font-mono text-[10px] text-[#606d80]"
             >
-              POST /api/webhooks/{g.toLowerCase()}
+              POST /api/webhooks/{g.toLowerCase()} · 503 até validação
             </code>
           ))}
         </div>
         <p className="mt-2 font-mono text-[10px] text-[#3a4453]">
-          Cada gateway envia eventos de compra (idempotentes via
-          x-idempotency-key). Registros aparecem no ledger abaixo em tempo real.
+          Nenhum evento externo é aceito neste momento. A ingestão só será
+          habilitada após validação da assinatura oficial e normalização de cada provedor.
+          Cadastros feitos no painel permanecem manual_unverified e não entram na receita.
         </p>
       </Panel>
 
