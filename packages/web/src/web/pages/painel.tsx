@@ -9,6 +9,7 @@ import {
   Code2,
   ArrowLeft,
   Clapperboard,
+  MessageSquare,
 } from "lucide-react";
 import { Seo } from "../components/seo";
 import { B2BKanban } from "../components/painel/b2b-kanban";
@@ -17,8 +18,9 @@ import { Roboavaliador } from "../components/painel/roboavaliador";
 import { RevOps } from "../components/painel/revops";
 import { DevEngine } from "../components/painel/dev-engine";
 import { ImperatorMovie } from "../components/painel/imperator-movie";
+import { KjsCrm } from "../components/painel/kjs-crm";
 
-type Tab = "b2b" | "b2c" | "robo" | "revops" | "dev" | "movie";
+type Tab = "b2b" | "b2c" | "robo" | "revops" | "dev" | "movie" | "crm";
 
 const NAV: { id: Tab; label: string; icon: typeof Users; accent: string }[] = [
   { id: "b2b", label: "Demand Engine · B2B", icon: Users, accent: "#00f0ff" },
@@ -27,6 +29,7 @@ const NAV: { id: Tab; label: string; icon: typeof Users; accent: string }[] = [
   { id: "revops", label: "RevOps & LGPD", icon: Activity, accent: "#a06bff" },
   { id: "dev", label: "Dev Engine", icon: Code2, accent: "#00ff66" },
   { id: "movie", label: "Imperator Movie Ω", icon: Clapperboard, accent: "#00ff66" },
+  { id: "crm", label: "CRM & Inbox Ω", icon: MessageSquare, accent: "#00f0ff" },
 ];
 
 export default function PainelPage() {
@@ -107,6 +110,7 @@ export default function PainelPage() {
           {tab === "revops" && <RevOps />}
           {tab === "dev" && <DevEngine />}
           {tab === "movie" && <ImperatorMovie />}
+          {tab === "crm" && <KjsCrm />}
         </main>
       </div>
     </div>
