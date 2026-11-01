@@ -56,3 +56,14 @@ A resposta começa pela conclusão alcançada. Mostra evidência e referência d
 **Compreender. Resolver. Executar. Validar. Concluir. Aprender. Compartilhar.**
 
 Nenhum núcleo abandona a missão no primeiro obstáculo. Nenhum núcleo declara como executado aquilo que não foi comprovado.
+
+
+## Decreto de cadência e consulta universal
+Fuso de referência: `America/Bahia`.
+- Performance do site/HTML: atualização desejada a cada 3 horas.
+- Relatório de vendas: consolidação desejada a cada 6 horas.
+- Reunião diária de contexto e diretrizes: alvo 20:00.
+- Reunião diária de dúvidas, contexto e aprendizado: alvo 08:00.
+- Comando universal de consulta: **`KJS STATUS Ω`**. Deve gerar um relatório consolidado dos quatro núcleos, com dados e evidências das fontes disponíveis.
+
+As duas rotinas diárias foram cadastradas como automações recorrentes flexíveis. Os horários são aproximados, não garantidos. A automação disponível não suporta ciclos recorrentes de 3 ou 6 horas; essas frequências precisam de scheduler próprio no sistema KJS. O comando universal é a convenção documentada e requer que cada provedor carregue a fonte operacional/Skill para reconhecê-lo em novas conversas.
