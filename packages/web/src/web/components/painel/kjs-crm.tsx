@@ -26,6 +26,7 @@ export function KjsCrm() {
   const [message, setMessage] = useState("");
   const [newName, setNewName] = useState("");
   const [newContact, setNewContact] = useState("");
+  const [consentConfirmed, setConsentConfirmed] = useState(false);
   const [showNew, setShowNew] = useState(false);
 
   useEffect(() => {
@@ -52,7 +53,7 @@ export function KjsCrm() {
   const createConversation = useMutation(orpc.inbox.create.mutationOptions({
     onSuccess: async (conversation) => {
       setSelectedId(conversation.id);
-      setNewName(""); setNewContact(""); setShowNew(false);
+      setNewName(""); setNewContact(""); setConsentConfirmed(false); setShowNew(false);
       await qc.invalidateQueries({ queryKey: orpc.inbox.list.key() });
     },
   }));
@@ -148,7 +149,7 @@ export function KjsCrm() {
             <span className="font-mono text-[10px] font-bold tracking-widest text-[#9aa6b2]">CAIXA DE ENTRADA</span>
             <button onClick={() => setShowNew((v) => !v)} className="rounded border border-[#283241] p-1.5 text-[#00ff66]" aria-label="Nova conversa"><Plus className="h-4 w-4" /></button>
           </div>
-          {showNew && <form className="mb-3 space-y-2 rounded border border-[#283241] p-2" onSubmit={(e) => { e.preventDefault(); createConversation.mutate({ contactName: newName, contact: newContact, channel: "manual" }); }}>
+          {showNew && <form className="mb-3 space-y-2 rounded border border-[#283241] p-2" onSubmit={(e) => { e.preventDefault(); createConversation.mutate({ contactName: newName, contact: newContact, channel: "manual", consentRecorded: true }); }}>
             <input className={field} placeholder="Nome do contato" value={newName} onChange={(e) => setNewName(e.target.value)} required />
             <input className={field} placeholder="WhatsApp / e-mail" value={newContact} onChange={(e) => setNewContact(e.target.value)} required />
             <button className="w-full rounded bg-[#00ff66] px-3 py-2 font-mono text-[10px] font-bold text-black" disabled={createConversation.isPending}>Criar conversa</button>
