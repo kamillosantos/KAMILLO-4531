@@ -112,3 +112,33 @@ export const devEngineRuns = sqliteTable("dev_engine_runs", {
     .notNull()
     .$defaultFn(() => new Date()),
 });
+
+
+// ── KJS CRM Inbox — persistent conversations and message history ───
+export const crmConversations = sqliteTable("crm_conversations", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  contactName: text("contact_name").notNull(),
+  contact: text("contact").notNull(),
+  channel: text("channel").notNull().default("web"),
+  status: text("status").notNull().default("bot"),
+  assignedTo: text("assigned_to"),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
+export const crmMessages = sqliteTable("crm_messages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  conversationId: integer("conversation_id")
+    .notNull()
+    .references(() => crmConversations.id, { onDelete: "cascade" }),
+  direction: text("direction").notNull(),
+  senderType: text("sender_type").notNull(),
+  content: text("content").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
