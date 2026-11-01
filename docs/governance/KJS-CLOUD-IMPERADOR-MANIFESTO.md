@@ -1,6 +1,7 @@
 # KJS Cloud Imperador Ω — Manifesto Operacional Multi-LLM
 
 **Versão:** 1.1.0  
+**Fonte operacional canônica:** `docs/governance/KJS-OPERATING-SOURCE-OF-TRUTH.md`  
 **Skill canônica:** `.github/skills/AUTONOMOUS-RESOLUTION-OMEGA/SKILL.md`
 
 ## Princípio soberano
