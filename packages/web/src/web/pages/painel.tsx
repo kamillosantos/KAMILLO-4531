@@ -8,6 +8,7 @@ import {
   Activity,
   Code2,
   ArrowLeft,
+  Clapperboard,
 } from "lucide-react";
 import { Seo } from "../components/seo";
 import { B2BKanban } from "../components/painel/b2b-kanban";
@@ -15,8 +16,9 @@ import { B2CFunnel } from "../components/painel/b2c-funnel";
 import { Roboavaliador } from "../components/painel/roboavaliador";
 import { RevOps } from "../components/painel/revops";
 import { DevEngine } from "../components/painel/dev-engine";
+import { ImperatorMovie } from "../components/painel/imperator-movie";
 
-type Tab = "b2b" | "b2c" | "robo" | "revops" | "dev";
+type Tab = "b2b" | "b2c" | "robo" | "revops" | "dev" | "movie";
 
 const NAV: { id: Tab; label: string; icon: typeof Users; accent: string }[] = [
   { id: "b2b", label: "Demand Engine · B2B", icon: Users, accent: "#00f0ff" },
@@ -24,6 +26,7 @@ const NAV: { id: Tab; label: string; icon: typeof Users; accent: string }[] = [
   { id: "robo", label: "Roboavaliador", icon: ShieldCheck, accent: "#00ff66" },
   { id: "revops", label: "RevOps & LGPD", icon: Activity, accent: "#a06bff" },
   { id: "dev", label: "Dev Engine", icon: Code2, accent: "#00ff66" },
+  { id: "movie", label: "Imperator Movie Ω", icon: Clapperboard, accent: "#00ff66" },
 ];
 
 export default function PainelPage() {
@@ -33,12 +36,11 @@ export default function PainelPage() {
     <div className="min-h-screen bg-[#050505] font-mono text-[#e0e6ed]">
       <Seo
         title="Painel · #KamilloSantosProtocol"
-        description="Painel operacional interno — Demand Engine B2B, 101X Funnel B2C, Roboavaliador e RevOps."
+        description="Painel operacional interno — Demand Engine B2B, 101X Funnel B2C, Roboavaliador, RevOps e Imperator Movie."
         path="/painel"
         noindex
       />
 
-      {/* Top OS bar */}
       <header className="flex items-center justify-between border-b border-[#1f242d] bg-[#0d0f12] px-6 py-3">
         <div className="flex items-center gap-3">
           <Cpu className="h-5 w-5 animate-pulse text-[#00ff66]" />
@@ -49,8 +51,7 @@ export default function PainelPage() {
         </div>
         <div className="hidden items-center gap-6 text-[10px] text-[#606d80] md:flex">
           <span>
-            CORE:{" "}
-            <strong className="text-[#e0e6ed]">KAMILLO IA</strong>
+            CORE: <strong className="text-[#e0e6ed]">KAMILLO IA</strong>
           </span>
           <span>
             MODE: <strong className="text-[#00ff66]">AUTONOMOUS</strong>
@@ -65,7 +66,6 @@ export default function PainelPage() {
       </header>
 
       <div className="flex flex-col md:flex-row">
-        {/* Sidebar */}
         <aside className="border-b border-[#1f242d] bg-[#0d0f12] p-4 md:min-h-[calc(100vh-49px)] md:w-64 md:border-b-0 md:border-r">
           <div className="mb-4 text-[10px] font-semibold uppercase tracking-wider text-[#606d80]">
             Engines & Views
@@ -80,7 +80,7 @@ export default function PainelPage() {
                   onClick={() => setTab(n.id)}
                   className={`flex flex-shrink-0 items-center gap-3 rounded px-3 py-2.5 text-xs transition ${
                     active
-                      ? "bg-[#1f242d] border-l-2"
+                      ? "border-l-2 bg-[#1f242d]"
                       : "border-l-2 border-transparent text-[#606d80] hover:bg-[#1f242d]/50"
                   }`}
                   style={active ? { borderColor: n.accent, color: n.accent } : {}}
@@ -100,13 +100,13 @@ export default function PainelPage() {
           </div>
         </aside>
 
-        {/* Content */}
         <main className="flex-1 overflow-x-hidden bg-[#050505] p-6">
           {tab === "b2b" && <B2BKanban />}
           {tab === "b2c" && <B2CFunnel />}
           {tab === "robo" && <Roboavaliador />}
           {tab === "revops" && <RevOps />}
           {tab === "dev" && <DevEngine />}
+          {tab === "movie" && <ImperatorMovie />}
         </main>
       </div>
     </div>
