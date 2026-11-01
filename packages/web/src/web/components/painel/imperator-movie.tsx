@@ -18,6 +18,9 @@ import {
   FileVideo,
   Clock3,
   CircleDot,
+  Camera,
+  AudioLines,
+  Gauge,
 } from "lucide-react";
 
 type Category = "anime" | "audiobook" | "course";
@@ -29,7 +32,8 @@ type ProductionMode =
   | "cinema"
   | "documentary"
   | "education"
-  | "social";
+  | "social"
+  | "ugc";
 
 const CATEGORIES: {
   id: Category;
@@ -66,6 +70,7 @@ const MODES: { id: ProductionMode; title: string; icon: typeof Film }[] = [
   { id: "documentary", title: "Documentário", icon: BookOpen },
   { id: "education", title: "Educação", icon: GraduationCap },
   { id: "social", title: "Social Video", icon: MonitorPlay },
+  { id: "ugc", title: "UGC Studio", icon: Camera },
 ];
 
 const MODEL_OPTIONS = [
@@ -99,6 +104,13 @@ export function ImperatorMovie() {
   const [photoName, setPhotoName] = useState("");
   const [audioName, setAudioName] = useState("");
   const [prepared, setPrepared] = useState(false);
+  const [resolution, setResolution] = useState("4k");
+  const [frameRate, setFrameRate] = useState("24");
+  const [vfx, setVfx] = useState<string[]>(["compositing", "particles"]);
+  const [audioMix, setAudioMix] = useState("surround");
+  const [audioCodec, setAudioCodec] = useState("dolby-atmos");
+  const [ugcStyle, setUgcStyle] = useState("testimonial");
+  const [colorGrade, setColorGrade] = useState("cinematic");
 
   const selectedCategory = useMemo(
     () => CATEGORIES.find((item) => item.id === category)!,
@@ -106,6 +118,14 @@ export function ImperatorMovie() {
   );
 
   const prepareBrief = () => setPrepared(true);
+  const toggleVfx = (value: string) => {
+    setVfx((current) =>
+      current.includes(value)
+        ? current.filter((item) => item !== value)
+        : [...current, value],
+    );
+    setPrepared(false);
+  };
 
   return (
     <section className="space-y-6 text-[#e0e6ed]">
@@ -312,6 +332,121 @@ export function ImperatorMovie() {
             </label>
           </div>
 
+          <div className="space-y-4 rounded-lg border border-[#27313d] bg-[#080c12] p-4">
+            <div className="flex items-center gap-2">
+              <Camera className="h-4 w-4 text-[#00ff66]" />
+              <h3 className="text-xs font-bold uppercase tracking-wider">Cinema Pro · UGC · VFX</h3>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label htmlFor="movie-resolution" className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#8190a2]">
+                  Resolução de master
+                </label>
+                <select id="movie-resolution" value={resolution} onChange={(event) => { setResolution(event.target.value); setPrepared(false); }} className="w-full rounded-lg border border-[#27313d] bg-[#070b10] px-3 py-3 text-xs text-[#d8e0e9] outline-none focus:border-[#00ff66]/70">
+                  <option value="1080p">Full HD · 1080p</option>
+                  <option value="4k">4K UHD</option>
+                  <option value="6k">6K</option>
+                  <option value="8k">8K · master premium</option>
+                  <option value="source">Resolução máxima da fonte</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="movie-fps" className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#8190a2]">
+                  Cadência de imagem
+                </label>
+                <select id="movie-fps" value={frameRate} onChange={(event) => { setFrameRate(event.target.value); setPrepared(false); }} className="w-full rounded-lg border border-[#27313d] bg-[#070b10] px-3 py-3 text-xs text-[#d8e0e9] outline-none focus:border-[#00ff66]/70">
+                  <option value="24">24 fps · cinema</option>
+                  <option value="25">25 fps · broadcast</option>
+                  <option value="30">30 fps · digital</option>
+                  <option value="50">50 fps · motion</option>
+                  <option value="60">60 fps · high frame rate</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="movie-grade" className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#8190a2]">
+                  Direção de cor
+                </label>
+                <select id="movie-grade" value={colorGrade} onChange={(event) => { setColorGrade(event.target.value); setPrepared(false); }} className="w-full rounded-lg border border-[#27313d] bg-[#070b10] px-3 py-3 text-xs text-[#d8e0e9] outline-none focus:border-[#00ff66]/70">
+                  <option value="cinematic">Cinema · film look</option>
+                  <option value="documentary">Natural · documentário</option>
+                  <option value="commercial">Publicidade · clean</option>
+                  <option value="vintage">Vintage · película</option>
+                  <option value="custom">Custom LUT / referência</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="movie-ugc" className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#8190a2]">
+                  Linguagem UGC
+                </label>
+                <select id="movie-ugc" value={ugcStyle} onChange={(event) => { setUgcStyle(event.target.value); setPrepared(false); }} className="w-full rounded-lg border border-[#27313d] bg-[#070b10] px-3 py-3 text-xs text-[#d8e0e9] outline-none focus:border-[#00ff66]/70">
+                  <option value="testimonial">Depoimento / testimonial</option>
+                  <option value="unboxing">Unboxing / demonstração</option>
+                  <option value="creator">Creator / selfie editorial</option>
+                  <option value="storytime">Storytime / experiência</option>
+                  <option value="tutorial">Tutorial / prova de uso</option>
+                  <option value="hybrid">Híbrido UGC + cinema</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-[#8190a2]">Efeitos especiais e pós-produção</div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {[
+                  ["compositing", "Composição / chroma"],
+                  ["particles", "Partículas / atmos"],
+                  ["motion", "Motion graphics"],
+                  ["cgi", "CGI / 3D"],
+                  ["cleanup", "Cleanup / remoção"],
+                  ["transitions", "Transições avançadas"],
+                  ["stabilization", "Estabilização"],
+                  ["upscale", "Upscale / restauração"],
+                  ["tracking", "Tracking / matchmove"],
+                ].map(([value, label]) => (
+                  <label key={value} className="flex cursor-pointer items-center gap-2 rounded-md border border-[#27313d] bg-[#0b1017] px-2 py-2 text-[10px] text-[#a6b2c1]">
+                    <input type="checkbox" checked={vfx.includes(value)} onChange={() => toggleVfx(value)} className="accent-[#00ff66]" />
+                    {label}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4 rounded-lg border border-[#27313d] bg-[#080c12] p-4">
+            <div className="flex items-center gap-2">
+              <AudioLines className="h-4 w-4 text-[#00ff66]" />
+              <h3 className="text-xs font-bold uppercase tracking-wider">Cinema Audio · Digital Surround</h3>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label htmlFor="movie-audio" className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#8190a2]">
+                  Mixagem
+                </label>
+                <select id="movie-audio" value={audioMix} onChange={(event) => { setAudioMix(event.target.value); setPrepared(false); }} className="w-full rounded-lg border border-[#27313d] bg-[#070b10] px-3 py-3 text-xs text-[#d8e0e9] outline-none focus:border-[#00ff66]/70">
+                  <option value="stereo">Estéreo</option>
+                  <option value="surround">5.1 Digital Surround</option>
+                  <option value="7.1">7.1 Surround</option>
+                  <option value="immersive">Áudio imersivo / espacial</option>
+                  <option value="adaptive">Adaptável à plataforma</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="movie-codec" className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#8190a2]">
+                  Entrega / formato de áudio
+                </label>
+                <select id="movie-codec" value={audioCodec} onChange={(event) => { setAudioCodec(event.target.value); setPrepared(false); }} className="w-full rounded-lg border border-[#27313d] bg-[#070b10] px-3 py-3 text-xs text-[#d8e0e9] outline-none focus:border-[#00ff66]/70">
+                  <option value="dolby-atmos">Dolby Atmos — se suportado</option>
+                  <option value="pcm">PCM / WAV master</option>
+                  <option value="aac">AAC — distribuição digital</option>
+                  <option value="eac3">Dolby Digital Plus / E-AC-3</option>
+                </select>
+              </div>
+            </div>
+            <p className="text-[10px] leading-4 text-[#738196]">
+              Mixagem 5.1/7.1/Atmos exige trilhas e renderizador compatíveis. O seletor define a especificação desejada; não afirma que a plataforma de destino aceite esse formato.
+            </p>
+          </div>
+
           <div className="space-y-3 rounded-lg border border-[#27313d] bg-[#080c12] p-4">
             <div className="flex items-center gap-2 text-xs font-bold">
               <ShieldCheck className="h-4 w-4 text-[#00ff66]" /> Autorização de imagem e voz
@@ -349,7 +484,8 @@ export function ImperatorMovie() {
               {[
                 ["Interface do agente", "Disponível", "ok"],
                 ["Orquestração de modelos", "Integração pendente", "pending"],
-                ["Renderização de vídeo", "Provedor não conectado", "pending"],
+                ["Renderização 4K/8K e VFX", "Pipeline não conectado", "pending"],
+                ["Mixagem surround / Atmos", "Pipeline de áudio pendente", "pending"],
                 ["YouTube / Instagram", "Autorização pendente", "pending"],
                 ["Data Genius", "Instrumentação pendente", "pending"],
               ].map(([name, status, state]) => (
@@ -386,12 +522,15 @@ export function ImperatorMovie() {
                 <div className="text-[#8290a1]">Modelo: {MODEL_OPTIONS.find((item) => item.value === model)?.label}</div>
                 <div className="text-[#8290a1]">Destino: {PLATFORM_OPTIONS.find((item) => item.value === platform)?.label}</div>
                 <div className="text-[#8290a1]">Duração: {duration === "custom" ? "Personalizada" : `${duration} segundos`} · {ratio}</div>
+                <div className="text-[#8290a1]">Master: {resolution.toUpperCase()} · {frameRate} fps · {colorGrade}</div>
+                <div className="text-[#8290a1]">UGC: {ugcStyle} · VFX: {vfx.length ? vfx.join(", ") : "nenhum selecionado"}</div>
+                <div className="text-[#8290a1]">Áudio: {audioMix} · {audioCodec}</div>
                 {(photoName || audioName) && <div className="text-[#8290a1]">Referências: {[photoName, audioName].filter(Boolean).join(" · ")}</div>}
                 {(photoName || audioName) && (!likenessConsent && photoName || !voiceConsent && audioName) && (
                   <div className="rounded bg-[#2b2113] p-2 text-[10px] text-[#e5b96b]">Confirme as autorizações aplicáveis antes de qualquer uso de imagem ou voz.</div>
                 )}
                 <p className="border-t border-[#27313d] pt-2 leading-5 text-[#8290a1]">{brief}</p>
-                <p className="text-[10px] text-[#e5b96b]">Prévia local — nenhuma geração ou publicação foi executada.</p>
+                <p className="text-[10px] text-[#e5b96b]">Prévia local — especificação de master selecionada; geração, renderização e publicação ainda não foram executadas.</p>
               </div>
             ) : (
               <p className="text-xs leading-5 text-[#8290a1]">
