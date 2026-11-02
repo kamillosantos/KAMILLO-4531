@@ -6,7 +6,7 @@ import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ErrorBoundary } from "../components/__ErrorBoundary";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 import { OneDollarStatsProvider } from "../lib/__analytics";
 import { isWeb, startWebSafeArea } from "../lib/__web-safe-area";
 import appJson from "../app.json";
