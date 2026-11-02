@@ -1,6 +1,6 @@
 # KJS Operating Source of Truth Ω
-**Versão:** 1.1.0  
-**Status:** documento canônico de diretrizes operacionais  
+**Versão:** 1.2.0  \
+**Status:** documento canônico de diretrizes operacionais  \
 **Branch de referência:** `feat/crm-kanban-evidence`
 
 > Este documento é a fonte versionada das diretrizes do ecossistema KJS. Agentes novos devem ler este documento e a Skill `.github/skills/AUTONOMOUS-RESOLUTION-OMEGA/SKILL.md` antes de executar tarefas.
@@ -174,3 +174,57 @@ O repositório versionado é a memória operacional comum. Cada núcleo deve car
 5. Tratar os achados de .env no fluxo privado: rotacionar credenciais reais, remover rastreamento e revisar histórico/acessos.
 6. Implementar scheduler, fila, workers, idempotência, limites de custo, kill switch e observabilidade antes de declarar heartbeat 24/7.
 7. Implementar o marketplace funcional por etapas; manter sua situação como especificação até haver código, testes e evidência de publicação.
+
+
+## 13. Reunião diária de contexto e diretrizes — 02/11/2026
+**Registro:** 2026-11-02T19:16:49-03:00  
+**Branch consultada:** `feat/crm-kanban-evidence`  
+**Commit-base da reunião:** `595d179f99adc82af89ca00a6f2fee45f4234c31`
+
+### 13.1 Evidências verificadas nesta reunião
+- A branch de governança está **32 commits à frente e zero atrás de `main`**, com 25 arquivos diferentes na comparação consultada. O HEAD é `595d179f99adc82af89ca00a6f2fee45f4234c31`. `main` permanece no commit `8d29da6fd6aaf96b182d50bfacdb7cb604e70f92`; nenhuma alteração em `main` foi realizada nesta reunião.
+- Os commits recentes consolidaram a Skill de governança multi-LLM, o contrato de handoff com ACK, o manifesto v1.2.0, o estado de runtime v1.1.0 e este registro de contexto.
+- O CI mais recente para o HEAD terminou em **failure**: testes unitários ASTRA passaram; typecheck passou; lint falhou; build web foi ignorado por dependência da etapa anterior. O check reporta 12 annotations, mas o detalhe textual dessas annotations não estava acessível pela conexão consultada. Portanto, não declarar build aprovado.
+- Não foi encontrado PR aberto para esta branch na consulta. Não há evidência nesta reunião de merge, deploy público, endpoint KJS ativo ou health check de produção.
+- O contrato de handoff multi-LLM está versionado, mas não há ACK de recebimento dos outros provedores nesta reunião.
+
+### 13.2 Estado dos quatro núcleos
+| Núcleo | Estado baseado em evidência | Limite atual |
+|---|---|---|
+| GPT KJS | Orquestração e auditoria executadas nesta sessão, com acesso à fonte GitHub conectada. | Isto não comprova um runtime KJS autônomo separado, API própria ou sincronização com outras conversas. |
+| Meta KJS | Papel e contrato operacional documentados. | Sem sessão/API Meta confirmada e sem ACK de recebimento nesta revisão; nenhuma campanha/publicação foi executada. |
+| Gemini KJS | Papel e contrato operacional documentados. | Sem conexão Gemini/Google confirmada e sem ACK de recebimento nesta revisão. |
+| Cloud Imperador Ω | Fonte canônica e manifesto versionados e consultáveis no GitHub. | Serviço de coordenação, fila, workers, scheduler, telemetria contínua, endpoint e heartbeat de 8 minutos não foram comprovados como ativos. |
+
+Estados acima não são pontuação de capacidade dos modelos; representam somente o que foi observado e confirmado nesta revisão.
+
+### 13.3 Decisões reafirmadas
+1. `KAMILLO-4531`, branch `feat/crm-kanban-evidence`, permanece a fonte de governança desta linha de trabalho. Preservar `main`; não fazer merge integral nem deploy enquanto CI, revisão do diff e critérios de aceite não estiverem satisfeitos.
+2. `KJS_PLATFORM` permanece a identidade/contrato canônico. Adaptadores de provedores externos não se tornam identidade do produto. Manter separados: três LLMs centrais, doze especialistas e quatro núcleos operacionais.
+3. A sincronização entre GPT, Meta, Gemini e Cloud exige handoff versionado e ACK explícito com versão carregada e ferramentas disponíveis. Sem ACK, o estado é `SENT_NOT_CONFIRMED` ou `NÃO CONFIRMADO`, nunca `SYNCED`.
+4. Aquisição permanece orgânica; não presumir tráfego pago. O marketplace é fabricação própria, sem white-label/afiliados; Mercado Pago está descartado; Hotmart não é requisito de fabricação; trial definido de sete dias, sem cartão, com e-mail e WhatsApp.
+5. Métricas de produção continuam limitadas a eventos reais, com origem, timestamp, ambiente, identificador único e validação. Registros manuais, sandbox, previsões e placeholders não podem ser somados como receita ou atividade confirmada.
+6. A cadência de 8 minutos, a atualização de performance a cada 3 horas e o relatório de vendas a cada 6 horas continuam como requisitos; não declarar essas rotinas ativas até existir scheduler próprio, execução observável e trilha de auditoria.
+
+### 13.4 Riscos prioritários
+- **CI:** lint vermelho impede o build; identificar as 12 annotations, corrigir a causa e executar novamente lint, build e pipeline completo.
+- **Segredos:** inventário anterior identificou arquivos `.env` rastreados em dois repositórios conectados. Tratar credenciais reais como potencialmente expostas; rotacionar primeiro, depois remover do rastreamento/histórico conforme plano seguro. Não copiar valores secretos para issues, logs, Git ou conversas.
+- **Segurança administrativa:** não há confirmação de aplicação/verificação de branch protection, secret scanning, push protection, Dependabot/rulesets em todos os repositórios, nem de MFA/passkeys, sessões, OAuth e regras de encaminhamento nas contas de e-mail.
+- **Runtime:** duas linhas experimentais do runtime permanecem sem reconciliação comprovada; endpoint, segredo em secret manager, persistência, health check e autenticação ainda precisam de evidência.
+- **Continuidade:** não há evidência de scheduler/queue/workers ativos nem de handoff com ACK dos quatro núcleos.
+- **Produto:** marketplace permanece especificação até que implementação, testes e publicação sejam demonstrados.
+
+### 13.5 Plano de execução priorizado
+| Prioridade | Ação | Critério de aceite |
+|---|---|---|
+| P0 | Corrigir lint na branch de governança. | 12 annotations triadas; lint aprovado; build web executado e aprovado; CI verde no HEAD atualizado. |
+| P0 | Tratar os arquivos `.env` rastreados no inventário de segurança. | Credenciais reais rotacionadas antes da remoção; arquivos removidos do tracking; histórico/acessos revisados; nenhum segredo exposto no processo. |
+| P1 | Reconciliar as linhas experimentais do runtime em branch limpa, selecionando commits necessários. | `KJS_PLATFORM` preservado como contrato canônico; diff revisado; testes e CI aprovados; PR revisável; `main` só muda após aprovação e merge explícito. |
+| P1 | Validar endpoint, secret manager, autenticação, persistência e health check. | Teste autenticado e teste de contrato aprovados; persistência confirmada; health check e login observados; nenhuma alegação baseada apenas em configuração. |
+| P1 | Implantar handoff com ACK por núcleo. | Cada núcleo registra `received_at`, versão carregada, ferramentas, escopo e aceite/rejeição. Sem confirmação, permanece não sincronizado. |
+| P2 | Aplicar baseline de segurança a repositórios e contas de e-mail. | Configurações verificadas individualmente; MFA/passkeys, recuperação, sessões, OAuth, regras de encaminhamento e controles GitHub registrados com evidência. |
+| P2 | Implementar scheduler, fila, workers e observabilidade. | Heartbeat real de 8 minutos; idempotência, limites de custo/concorrência, kill switch, logs rastreáveis e testes de reinício. |
+| P3 | Avançar o marketplace por entregas pequenas. | Produto funcional, pagamento/trial conforme decisão vigente, tracking com eventos reais, testes e evidência de publicação. |
+
+### 13.6 Próximo ciclo de trabalho
+A próxima execução deve começar pelo P0 de CI e pelo tratamento seguro dos segredos. Em paralelo, preparar a reconciliação do runtime sem tocar em `main`. O relatório seguinte deve comparar o HEAD, CI, ACKs dos núcleos, achados de segurança e evidência de runtime com este registro.
