@@ -1,6 +1,6 @@
 # KJS Cloud Imperador Ω — Manifesto Operacional Multi-LLM
 
-**Versão:** 1.1.0  
+**Versão:** 1.2.0  
 **Fonte operacional canônica:** `docs/governance/KJS-OPERATING-SOURCE-OF-TRUTH.md`  
 **Skill canônica:** `.github/skills/AUTONOMOUS-RESOLUTION-OMEGA/SKILL.md`
 
@@ -67,3 +67,11 @@ Fuso de referência: `America/Bahia`.
 - Comando universal de consulta: **`KJS STATUS Ω`**. Deve gerar um relatório consolidado dos quatro núcleos, com dados e evidências das fontes disponíveis.
 
 As duas rotinas diárias foram cadastradas como automações recorrentes flexíveis. Os horários são aproximados, não garantidos. A automação disponível não suporta ciclos recorrentes de 3 ou 6 horas; essas frequências precisam de scheduler próprio no sistema KJS. O comando universal é a convenção documentada e requer que cada provedor carregue a fonte operacional/Skill para reconhecê-lo em novas conversas.
+
+
+## Evolução 1.2.0 — interoperabilidade e identidade KJS
+- KJS_PLATFORM é o contrato canônico de inferência; provedores externos são adaptadores, não identidade do produto.
+- O Conselho interno de doze especialistas, os três LLMs centrais e os quatro núcleos externos são camadas diferentes e não devem ser contados como uma única frota.
+- A sincronização entre GPT KJS, Meta KJS, Gemini KJS e Cloud Imperador ocorre por fonte versionada e handoff com confirmação de recebimento; não por memória presumida.
+- O estado técnico do runtime, as branches experimentais e as dependências externas são registrados separadamente de deploy e certificação.
+- Skill de transferência: .github/skills/KJS-MULTI-LLM-HANDOFF/SKILL.md.
