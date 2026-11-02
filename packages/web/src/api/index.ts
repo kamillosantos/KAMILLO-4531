@@ -10,6 +10,7 @@ import { audit } from "./routes/audit";
 import { devEngine } from "./routes/dev-engine";
 import { inbox } from "./routes/inbox";
 import { createCrmSession, hasCrmSession, passwordsMatch } from "./security/crm-session";
+import { mountCreativeOrchestrator } from "./creative-orchestrator";
 import { db } from "./database";
 import * as schema from "./database/schema";
 
@@ -36,6 +37,7 @@ export type AppRouter = typeof router;
 export type AppRouterClient = RouterClient<AppRouter>;
 
 const app = createApp(router);
+mountCreativeOrchestrator(app);
 
 // Private CRM operator session. Configure both secrets in the server environment.
 const loginAttempts = new Map<string, { count: number; since: number }>();
