@@ -1,5 +1,5 @@
 # KJS Operating Source of Truth Ω
-**Versão:** 1.0.0  
+**Versão:** 1.1.0  
 **Status:** documento canônico de diretrizes operacionais  
 **Branch de referência:** `feat/crm-kanban-evidence`
 
@@ -132,3 +132,45 @@ Comando canônico: **`KJS STATUS Ω`**.
 Ao receber esse comando, qualquer núcleo deve recuperar esta fonte operacional e o manifesto, consultar as fontes que realmente estiverem conectadas, consolidar o estado de GPT KJS, Meta KJS, Gemini KJS e Cloud Imperador, e entregar um relatório único com performance, vendas, tarefas, decisões, aprendizados e evidências. Não presumir memória compartilhada entre provedores: cada ambiente deve ter acesso a esta fonte versionada ou a uma cópia sincronizada. Se um dado não estiver acessível, informar sua origem/idade e não inventá-lo.
 
 O comando é uma convenção operacional documentada. Seu reconhecimento automático em todos os provedores depende de cada ambiente carregar esta Skill/fonte de contexto.
+
+
+## 12. Consolidação operacional — 02/11/2026
+Esta seção registra decisões e evidências recuperadas nesta revisão. O inventário completo das branches do runtime e dos achados sensíveis de segurança permanece no registro operacional privado; este documento não substitui a inspeção do estado atual antes de cada deploy.
+
+### Decisões vigentes
+- Identidade do produto e governança: KJS. O contrato canônico de inferência é KJS_PLATFORM, compatível com a interface Chat Completions.
+- Claude é referência funcional de engenharia, não provedor soberano. OpenAI, Anthropic e OpenRouter são adaptadores externos/experimentais, não a identidade da plataforma.
+- A arquitetura interna distingue três LLMs centrais (IMPERADOR, ALPHA e BETA) e doze especialistas do Conselho. Eles não são a mesma coisa que os quatro núcleos operacionais externos (GPT KJS, Meta KJS, Gemini KJS e Cloud Imperador).
+- Um runtime alternativo com quatro perfis e adaptador OpenRouter é protótipo separado; não deve ser confundido com o Conselho de doze especialistas nem promovido a arquitetura canônica sem reconciliação.
+- Aquisição vigente: orgânica; não presumir tráfego pago. O marketplace é de fabricação própria, sem white-label ou afiliados. A especificação do marketplace não equivale a produto implementado.
+- Mercado Pago está descartado. Hotmart não é requisito para fabricação do produto. O trial definido é de sete dias, sem cartão, com e-mail e WhatsApp.
+- Dados de produção devem conter origem, timestamp, ambiente, identificador único e validação. Teste, sandbox, previsão e placeholder permanecem segregados da produção.
+
+### Estado de engenharia
+- A branch de governança deste repositório está 27 commits à frente e zero atrás de main no momento da consulta. Main não foi alterada nesta revisão.
+- No repositório privado de runtime há duas linhas experimentais não reconciliadas: uma com integração KJS_PLATFORM e Conselho de especialistas; outra com runtime LLM de quatro perfis e adaptador OpenRouter. A primeira está divergente de main e associada a PR Draft não mergeável; a segunda está à frente de main, mas continua sendo protótipo.
+- Não foi confirmado endpoint KJS real, segredo no host, serviço Render conectado, execução de testes nesta revisão, workflow bem-sucedido, deploy público, health check ou login administrativo.
+- Não fazer merge integral de branch divergente. Reconciliar em branch limpa a partir da base escolhida, selecionar commits, executar checks e revisar o diff antes de PR/merge.
+
+### Compartilhamento entre núcleos
+O repositório versionado é a memória operacional comum. Cada núcleo deve carregar a fonte e a Skill, produzir handoffs identificados e confirmar a versão recebida. Não existe prova de sincronização automática entre conversas GPT, Meta, Gemini e Cloud Imperador. O contrato detalhado está em .github/skills/KJS-MULTI-LLM-HANDOFF/SKILL.md.
+
+### Cadências e automação
+- Heartbeat de oito minutos é requisito de arquitetura, não evidência de scheduler ativo.
+- Atualização de performance a cada três horas e relatório de vendas a cada seis horas exigem scheduler próprio KJS; a automação disponível não comprova essas cadências.
+- A rotina diária de contexto executou esta revisão. O horário de automações recorrentes é flexível e não deve ser descrito como execução garantida em minuto exato.
+- KJS STATUS Ω é o comando canônico de consulta, condicionado ao carregamento da fonte e às conexões reais de cada núcleo.
+
+### Segurança e observabilidade
+- Achados específicos de repositórios com arquivos .env rastreados ficam restritos ao registro privado. Credenciais reais devem ser rotacionadas antes da remoção dos arquivos/histórico; nunca copiar valores secretos para Git ou conversa.
+- A revisão não comprova que configurações administrativas de segurança de todos os repositórios ou contas de e-mail foram alteradas.
+- O Data Genius deve mostrar somente eventos reais, verificáveis e rastreáveis; ambientes de teste/sandbox devem ser segregados e claramente rotulados.
+
+### Próximas ações priorizadas
+1. Consolidar as duas linhas experimentais do runtime em uma branch limpa, preservando KJS_PLATFORM como identidade canônica.
+2. Confirmar endpoint KJS por secret manager e executar teste autenticado, teste de contrato, testes unitários e CI.
+3. Validar Render, persistência, health check e login antes de qualquer certificação; armazenamento efêmero não serve como garantia de retenção de dados críticos.
+4. Implementar handoff com ACK por núcleo e registro de versão carregada; não declarar distribuição sem confirmação.
+5. Tratar os achados de .env no fluxo privado: rotacionar credenciais reais, remover rastreamento e revisar histórico/acessos.
+6. Implementar scheduler, fila, workers, idempotência, limites de custo, kill switch e observabilidade antes de declarar heartbeat 24/7.
+7. Implementar o marketplace funcional por etapas; manter sua situação como especificação até haver código, testes e evidência de publicação.
