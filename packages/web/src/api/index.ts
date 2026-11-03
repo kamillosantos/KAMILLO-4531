@@ -121,7 +121,7 @@ app.post("/api/observability/ingest", async (c) => {
   const errors = validateKjsEvent(event);
   if (errors.length) return c.json({ error: "EVENT_VALIDATION_FAILED", details: errors }, 400);
   try {
-    await db.insert(schema.ecosystemEvents).values({
+    const inserted = await db.insert(schema.ecosystemEvents).values({
       eventId: event.event_id, eventType: event.event_type, schemaVersion: event.schema_version,
       occurredAt: event.occurred_at, sourceSystem: event.source_system,
       sourceComponent: event.source_component, sourceVersion: event.source_version,
@@ -129,11 +129,11 @@ app.post("/api/observability/ingest", async (c) => {
       correlationId: event.correlation_id, actorType: event.actor_type,
       actorId: event.actor_id, status: event.status,
       payloadJson: JSON.stringify(event.payload || {}),
-    });
+    }).onConflictDoNothing({ target: schema.ecosystemEvents.eventId })
+      .returning({ eventId: schema.ecosystemEvents.eventId });
+    if (inserted.length === 0) return c.json({ accepted: true, duplicate: true, event_id: event.event_id }, 200);
     return c.json({ accepted: true, event_id: event.event_id }, 201);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "";
-    if (/unique|constraint|duplicate/i.test(message)) return c.json({ accepted: true, duplicate: true, event_id: event.event_id }, 200);
+  } catch {
     return c.json({ error: "EVENT_PERSISTENCE_FAILED" }, 500);
   }
 });
