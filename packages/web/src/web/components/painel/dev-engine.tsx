@@ -184,6 +184,7 @@ export function DevEngine() {
               <div className="flex gap-2">
                 <input
                   id="dev-engine-feature"
+                  aria-label="Custom features"
                   className={inputCls}
                   value={featInput}
                   onChange={(e) => setFeatInput(e.target.value)}
