@@ -34,6 +34,14 @@ The current generic KJS envelope expects:
 
 This does not claim compatibility with native provider webhook signatures. A provider-specific adapter must verify the provider's official signature and then forward a signed KJS envelope. Do not expose secrets in browser code.
 
+## Latest automated verification
+
+- Bun locked install: PASSED.
+- Web TypeScript typecheck: PASSED.
+- Event contract tests: PASSED.
+- Web production build: PASSED.
+- Workflow: https://github.com/kamillosantos/KAMILLO-4531/actions/runs/41696630148
+
 ## Release boundary
 No deployment, provisioning, paid activation, schema migration, or production UI change was performed. No real provider, WhatsApp, CRM LLM, media renderer, or global event sink is certified as connected.
 
