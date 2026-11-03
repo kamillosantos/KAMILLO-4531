@@ -125,6 +125,7 @@ export const inbox = {
       const [conversation] = await db.update(schema.crmConversations)
         .set({ status: "waiting_human", assignedTo: "KJS", updatedAt: new Date() })
         .where(eq(schema.crmConversations.id, input.conversationId)).returning();
+      if (!conversation) throw new Error("Conversa não encontrada.");
       await db.insert(schema.auditLogs).values({
         action: "conversation_handoff",
         entity: "crm_conversation",
