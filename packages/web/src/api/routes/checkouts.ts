@@ -85,7 +85,7 @@ export const checkouts = {
         actor: "painel",
         details: `${row.gateway} · ${row.product} · ${row.offerType}`,
       });
-      await persistOperationalEvent({ event_type: "checkout.recorded", source_component: "checkout", status: row.status.toUpperCase(), payload: { checkout_id: row.id, gateway: row.gateway, offer_type: row.offerType } });
+      await persistOperationalEvent({ event_type: "checkout.manual_recorded", source_component: "checkout", status: "MANUAL_RECORD_RECORDED", payload: { checkout_id: row.id, gateway: row.gateway, offer_type: row.offerType, payment_status: row.status } });
       return row;
     }),
 };
