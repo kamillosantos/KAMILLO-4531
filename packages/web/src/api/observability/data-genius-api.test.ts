@@ -53,6 +53,20 @@ beforeAll(async () => {
 });
 
 describe("Data Genius ingest and query API", () => {
+  test("reports readiness only to an authenticated operator", async () => {
+    const denied = await app.request("/api/observability/health");
+    expect(denied.status).toBe(401);
+    const session = createCrmSession(process.env.KJS_CRM_SESSION_SECRET!);
+    const response = await app.request("/api/observability/health", {
+      headers: { cookie: "kjs_crm_session=" + session },
+    });
+    expect(response.status).toBe(200);
+    const result = await response.json() as { status: string; ledger: string; ingest: string };
+    expect(result.status).toBe("READY");
+    expect(result.ledger).toBe("READY");
+    expect(result.ingest).toBe("CONFIGURED");
+  });
+
   test("rejects unauthenticated producers", async () => {
     const response = await app.request("/api/observability/ingest", {
       method: "POST",
