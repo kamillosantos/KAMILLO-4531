@@ -1,4 +1,5 @@
 import type { Hono } from "hono";
+import { createObservedEvent } from "./observability/event-contract";
 
 type CreativeBrief = {
   brief: string;
@@ -114,7 +115,8 @@ export function mountCreativeOrchestrator(app: Hono) {
 
     try {
       const plan = await callDirector(input, requestId);
-      console.info(JSON.stringify({ event: "creative_plan_created", request_id: requestId, timestamp: new Date().toISOString(), environment: process.env.NODE_ENV || "unknown", source: "kjs-creative-orchestrator" }));
+      const operationalEvent = createObservedEvent({ event_type: "cinema.plan.created", source_component: "creative-orchestrator", correlation_id: requestId, status: "PLAN_READY_FOR_HUMAN_APPROVAL", actor_id: "creative-orchestrator", payload: { request_id: requestId, execution_scope: "PLANNING_ONLY" } });
+      console.info(JSON.stringify(operationalEvent));
       return c.json({
         request_id: requestId,
         status: "PLAN_READY_FOR_HUMAN_APPROVAL",
