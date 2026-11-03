@@ -13,7 +13,7 @@
 5. **Agency LLM services — NOT CONNECTED:** current CRM remains deterministic/rule-based unless a real provider integration is independently verified.
 6. **Cinema — PARTIAL:** creative planning now emits a validated operational event with correlation ID. Rendering, upload, upscaling, audio mastering and final media QA are separate unimplemented stages.
 7. **Data Genius — PARTIAL:** typed event contract, persistent `ecosystem_events` ledger, authenticated cross-repository ingestion API, protected read API, and existing-panel UI tab added. The IMPRRSDOR outbox forwarder is implemented on its branch. SQL migration is committed but not applied to any live database; matching endpoint/token configuration is still required in both environments.
-8. **Verification — VERIFIED ON BRANCH:** Bun locked install, TypeScript typecheck, event-contract tests and web build all passed in the latest branch run. The Bun server entrypoint was also repaired to receive the default Hono app export.
+8. **Verification — VERIFIED ON BRANCH:** Bun locked install, TypeScript typecheck, event-contract tests and web build passed in the last completed run. A new API integration suite now exercises ingest authentication, duplicate delivery and protected query; its current CI run is pending. The Bun server entrypoint now exports the Hono app consumed by `src/__server.ts`.
 
 ## New files and changes
 - `packages/web/src/api/observability/event-contract.ts`
@@ -22,8 +22,9 @@
 - `packages/web/src/api/creative-orchestrator.ts` now emits and persists a validated `cinema.plan.created` event.
 - `packages/web/src/api/index.ts` exposes `POST /api/observability/ingest` (shared bearer token) and `GET /api/observability/events` (CRM operator session), and now exports the Hono app consumed by `src/__server.ts`.
 - `packages/web/src/web/components/painel/data-genius.tsx` and the existing panel navigation provide the event ledger view.
-- `packages/web/drizzle/0001_data_genius.sql` contains the schema migration; apply it only through the approved database change process.
+- `packages/web/migrations/0001_data_genius.sql` contains the schema migration; apply it only through the approved database change process.
 - `.env.template` documents `DATA_GENIUS_INGEST_TOKEN`; the real secret must be configured in the server secret store, never committed.
+- `docs/integrations/KJS_DATA_GENIUS_BRIDGE_RUNBOOK.md` documents receiver/sender activation, acceptance checks and rollback.
 - `packages/web/src/api/index.ts` now rejects unsigned or non-idempotent purchase webhook requests.
 
 ## Webhook envelope contract
