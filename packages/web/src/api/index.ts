@@ -196,10 +196,6 @@ app.post("/api/webhooks/:gateway", async (c) => {
     return c.json({ error: "invalid webhook signature" }, 401);
   }
 
-  const transactionId = getGatewayTransactionId(body.transaction_id ?? body.transactionId);
-  if (!transactionId) return c.json({ error: "valid transaction_id required" }, 400);
-  const idem = gatewayIdempotencyKey(slug, transactionId);
-
   let body: Record<string, unknown>;
   try {
     const parsed: unknown = JSON.parse(rawBody);
@@ -208,6 +204,10 @@ app.post("/api/webhooks/:gateway", async (c) => {
   } catch {
     return c.json({ error: "invalid JSON" }, 400);
   }
+
+  const transactionId = getGatewayTransactionId(body.transaction_id ?? body.transactionId);
+  if (!transactionId) return c.json({ error: "valid transaction_id required" }, 400);
+  const idem = gatewayIdempotencyKey(slug, transactionId);
 
   const product = String(body.product ?? body.product_name ?? "").trim();
   const amount = Number(body.amount ?? body.value);
