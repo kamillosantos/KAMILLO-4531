@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import type { ReactNode } from "react";
+import { cloneElement, useId, type ReactElement, type ReactNode } from "react";
 
 // Shared "Sovereign OS" primitives — dark terminal aesthetic.
 export function Panel({
@@ -56,15 +56,20 @@ export function Field({
   children,
 }: {
   label: string;
-  children: ReactNode;
+  children: ReactElement<{ id?: string }>;
 }) {
+  const id = useId();
+
   return (
-    <label className="block">
-      <span className="mb-1 block text-[10px] uppercase tracking-wider text-[#606d80]">
+    <div className="block">
+      <label
+        htmlFor={id}
+        className="mb-1 block text-[10px] uppercase tracking-wider text-[#606d80]"
+      >
         {label}
-      </span>
-      {children}
-    </label>
+      </label>
+      {cloneElement(children, { id })}
+    </div>
   );
 }
 

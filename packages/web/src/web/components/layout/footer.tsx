@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { MessageCircle, Mail, MapPin } from "lucide-react";
+import { MessageCircle, MapPin } from "lucide-react";
 import { site } from "../../lib/site";
 import { services } from "../../data/services";
 

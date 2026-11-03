@@ -30,17 +30,19 @@ export function ExitIntent() {
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[9999] grid place-items-center p-5"
+    <dialog
+      open
+      className="fixed inset-0 z-[9999] m-0 grid h-full w-full max-h-none max-w-none place-items-center border-0 bg-transparent p-5"
       style={{ background: "rgba(2,6,17,0.82)", backdropFilter: "blur(10px)" }}
-      onClick={() => setOpen(false)}
-      role="dialog"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) setOpen(false);
+      }}
       aria-modal="true"
+      aria-label="Oferta de diagnóstico gratuito"
     >
       <div
         className="glass relative w-full max-w-[520px] rounded-2xl p-8 text-center glow-primary"
         style={{ borderColor: "rgba(96,165,250,0.4)" }}
-        onClick={(e) => e.stopPropagation()}
       >
         <button
           className="absolute top-4 right-4 text-[#93a2c4] hover:text-white"
@@ -77,6 +79,6 @@ export function ExitIntent() {
           Não, obrigado
         </button>
       </div>
-    </div>
+    </dialog>
   );
 }

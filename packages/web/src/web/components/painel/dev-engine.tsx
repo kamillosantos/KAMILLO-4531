@@ -176,11 +176,12 @@ export function DevEngine() {
             </div>
 
             <div>
-              <span className="mb-1 block text-[10px] uppercase tracking-wider text-[#606d80]">
+              <label htmlFor="dev-engine-feature" className="mb-1 block text-[10px] uppercase tracking-wider text-[#606d80]">
                 Custom features
-              </span>
+              </label>
               <div className="flex gap-2">
                 <input
+                  id="dev-engine-feature"
                   className={inputCls}
                   value={featInput}
                   onChange={(e) => setFeatInput(e.target.value)}
