@@ -75,9 +75,10 @@ export function LeadForm() {
                 </div>
               ) : (
                 <form onSubmit={submit} className="space-y-3.5">
-                  <Field label="Nome" value={form.name} onChange={set("name")} required placeholder="Seu nome" />
+                  <Field label="Nome" aria-label="Nome" value={form.name} onChange={set("name")} required placeholder="Seu nome" />
                   <Field
                     label="WhatsApp ou e-mail"
+                    aria-label="WhatsApp ou e-mail"
                     value={form.contact}
                     onChange={set("contact")}
                     required
@@ -85,6 +86,7 @@ export function LeadForm() {
                   />
                   <Field
                     label="Empresa (opcional)"
+                    aria-label="Empresa (opcional)"
                     value={form.company}
                     onChange={set("company")}
                     placeholder="Nome da empresa"
