@@ -76,61 +76,88 @@ app.delete("/api/crm/session", (c) => {
 });
 
 
-// ── Gateway webhook ingestion (B2C engine) ─────────────────────────
-// External infoproduct gateways POST purchase events here. Idempotent
-// on x-idempotency-key. Records land in the checkouts ledger and are
-// surfaced live in /painel → B2C module.
-const GATEWAY_SLUGS = [
-  "hotmart",
-  "kiwify",
-  "clickbank",
-  "buygoods",
-  "eduzz",
-  "monetizze",
-] as const;
+// ── Signed gateway webhook ingestion (B2C engine) ────────────────────
+const GATEWAY_SLUGS = ["hotmart", "kiwify", "clickbank", "buygoods", "eduzz", "monetizze"] as const;
+
+async function verifyGatewaySignature(rawBody: string, signature: string, secret: string): Promise<boolean> {
+  if (!signature.startsWith("sha256=")) return false;
+  const key = await crypto.subtle.importKey(
+    "raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"],
+  );
+  const digest = new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(rawBody)));
+  const expected = "sha256=" + Array.from(digest, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  if (signature.length !== expected.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < signature.length; i++) mismatch |= signature.charCodeAt(i) ^ expected.charCodeAt(i);
+  return mismatch === 0;
+}
 
 app.post("/api/webhooks/:gateway", async (c) => {
   const slug = c.req.param("gateway").toLowerCase();
   if (!GATEWAY_SLUGS.includes(slug as (typeof GATEWAY_SLUGS)[number])) {
     return c.json({ error: "unknown gateway" }, 404);
   }
-  let body: Record<string, unknown> = {};
-  try {
-    body = await c.req.json();
-  } catch {
-    body = {};
+
+  const secretName = `KJS_${slug.toUpperCase()}_WEBHOOK_SECRET`;
+  const secret = process.env[secretName] || process.env.KJS_WEBHOOK_SHARED_SECRET;
+  if (!secret || secret.length < 32) {
+    return c.json({ error: "webhook integration is not configured; event rejected" }, 503);
   }
-  const idem =
-    c.req.header("x-idempotency-key") || `${slug}_${Date.now()}`;
+
+  const rawBody = await c.req.text();
+  if (rawBody.length > 64_000) return c.json({ error: "payload too large" }, 413);
+  const signature = c.req.header("x-kjs-signature") || "";
+  if (!(await verifyGatewaySignature(rawBody, signature, secret))) {
+    return c.json({ error: "invalid webhook signature" }, 401);
+  }
+
+  const idem = c.req.header("x-idempotency-key")?.trim();
+  if (!idem || idem.length > 200) return c.json({ error: "valid x-idempotency-key required" }, 400);
+
+  let body: Record<string, unknown>;
+  try {
+    const parsed: unknown = JSON.parse(rawBody);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return c.json({ error: "invalid payload" }, 400);
+    body = parsed as Record<string, unknown>;
+  } catch {
+    return c.json({ error: "invalid JSON" }, 400);
+  }
+
+  const product = String(body.product ?? body.product_name ?? "").trim();
+  const amount = Number(body.amount ?? body.value);
+  const currency = String(body.currency ?? "BRL").toUpperCase();
+  const status = String(body.status ?? "").toLowerCase();
+  const allowedStatuses = ["approved", "paid", "refunded", "chargeback", "cancelled", "pending"];
+  if (!product || product.length > 240 || !Number.isFinite(amount) || amount <= 0 ||
+      !/^[A-Z]{3}$/.test(currency) || !allowedStatuses.includes(status)) {
+    return c.json({ error: "invalid purchase fields" }, 400);
+  }
 
   const gatewayName = slug.charAt(0).toUpperCase() + slug.slice(1);
   try {
-    const [row] = await db
-      .insert(schema.checkouts)
-      .values({
-        gateway: gatewayName,
-        product: String(body.product ?? body.product_name ?? "Produto"),
-        offerType: String(body.offer_type ?? body.offerType ?? "main"),
-        buyerName: body.buyer_name ? String(body.buyer_name) : undefined,
-        buyerEmail: body.buyer_email ? String(body.buyer_email) : undefined,
-        amount: Number(body.amount ?? body.value ?? 0),
-        currency: String(body.currency ?? "BRL"),
-        status: String(body.status ?? "approved"),
-        idempotencyKey: idem,
-      })
-      .returning();
+    const [row] = await db.insert(schema.checkouts).values({
+      gateway: gatewayName,
+      product,
+      offerType: String(body.offer_type ?? body.offerType ?? "main").slice(0, 80),
+      buyerName: body.buyer_name ? String(body.buyer_name).slice(0, 180) : undefined,
+      buyerEmail: body.buyer_email ? String(body.buyer_email).slice(0, 254) : undefined,
+      amount,
+      currency,
+      status,
+      idempotencyKey: idem,
+    }).returning();
+
     await db.insert(schema.auditLogs).values({
       action: "webhook_ingest",
       entity: "checkout",
       entityId: String(row.id),
       actor: gatewayName,
-      details: `Webhook ${gatewayName} recebido`,
+      details: JSON.stringify({ signature_verified: true, idempotency_key: idem }),
     });
-    return c.json({ received: true, id: row.id }, 200);
-  } catch {
-    // duplicate idempotency key — already processed
-    return c.json({ received: true, duplicate: true }, 200);
+    return c.json({ received: true, id: row.id }, 201);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (/unique|constraint|duplicate/i.test(message)) return c.json({ received: true, duplicate: true }, 200);
+    return c.json({ error: "webhook persistence failed" }, 500);
   }
 });
-
-export default app;
