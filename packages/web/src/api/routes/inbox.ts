@@ -5,6 +5,7 @@ import { base } from "../__core/app";
 import { db } from "../database";
 import * as schema from "../database/schema";
 import { hasCrmSession } from "../security/crm-session";
+import { persistOperationalEvent } from "../observability/persist-event";
 
 function assertAdmin(headers: Headers) {
   if (!hasCrmSession(headers)) throw new ORPCError("UNAUTHORIZED", { message: "Acesso restrito ao operador autenticado." });
@@ -62,6 +63,7 @@ export const inbox = {
         actor: "kjs-admin",
         details: "Conversa criada no inbox",
       });
+      await persistOperationalEvent({ event_type: "crm.conversation.created", source_component: "crm-inbox", status: "CONVERSATION_CREATED", payload: { conversation_id: conversation.id, channel: conversation.channel, consent_recorded: conversation.consentRecorded } });
       return conversation;
     }),
 
@@ -75,12 +77,13 @@ export const inbox = {
       const [conversation] = await db.select().from(schema.crmConversations)
         .where(eq(schema.crmConversations.id, input.conversationId)).limit(1);
       if (!conversation) throw new Error("Conversa não encontrada.");
-      await db.insert(schema.crmMessages).values({
+      const [inboundMessage] = await db.insert(schema.crmMessages).values({
         conversationId: input.conversationId,
         direction: "inbound",
         senderType: "contact",
         content: input.content,
-      });
+      }).returning();
+      await persistOperationalEvent({ event_type: "crm.message.received", source_component: "crm-inbox", status: "MESSAGE_RECEIVED", payload: { conversation_id: input.conversationId, message_id: inboundMessage.id } });
       const answer = botReply(input.content);
       const [botMessage] = await db.insert(schema.crmMessages).values({
         conversationId: input.conversationId,
@@ -88,6 +91,7 @@ export const inbox = {
         senderType: "bot",
         content: answer,
       }).returning();
+      await persistOperationalEvent({ event_type: "crm.bot.reply_created", source_component: "crm-inbox", status: "RULE_BASED_REPLY_CREATED", payload: { conversation_id: input.conversationId, message_id: botMessage.id, execution_mode: "DETERMINISTIC_RULES" } });
       await db.update(schema.crmConversations)
         .set({ status: "bot", updatedAt: new Date() })
         .where(eq(schema.crmConversations.id, input.conversationId));
@@ -110,6 +114,7 @@ export const inbox = {
       await db.update(schema.crmConversations)
         .set({ status: "human", assignedTo: "KJS", updatedAt: new Date() })
         .where(eq(schema.crmConversations.id, input.conversationId));
+      await persistOperationalEvent({ event_type: "crm.human.reply_sent", source_component: "crm-inbox", status: "HUMAN_REPLY_SENT", payload: { conversation_id: input.conversationId, message_id: message.id } });
       return message;
     }),
 
@@ -127,6 +132,7 @@ export const inbox = {
         actor: "kjs-admin",
         details: "Atendimento transferido para humano",
       });
+      await persistOperationalEvent({ event_type: "crm.conversation.handoff", source_component: "crm-inbox", status: "HUMAN_HANDOFF", payload: { conversation_id: input.conversationId, assigned_to: "KJS" } });
       return conversation;
     }),
 };
