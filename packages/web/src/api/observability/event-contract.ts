@@ -57,6 +57,9 @@ export function validateKjsEvent(event: KjsOperationalEvent): string[] {
   if (event?.occurred_at && (!Number.isFinite(Date.parse(event.occurred_at)) || !/^\d{4}-\d\d-\d\dT.*Z$/.test(event.occurred_at))) errors.push("TIMESTAMP_MUST_BE_UTC");
   if (event?.environment && !["development", "staging", "production"].includes(event.environment)) errors.push("INVALID_ENVIRONMENT");
   if (event?.event_class && !["OBSERVED", "TEST", "PREDICTED", "SYNTHETIC"].includes(event.event_class)) errors.push("INVALID_EVENT_CLASS");
+  if (event?.actor_type && !["human", "service", "agent", "system"].includes(event.actor_type)) errors.push("INVALID_ACTOR_TYPE");
+  if (event?.event_id && event.event_id.length > 160) errors.push("EVENT_ID_TOO_LONG");
+  if (event?.event_type && !/^[a-z][a-z0-9]*(?:[._][a-z0-9]+)+$/.test(event.event_type)) errors.push("INVALID_EVENT_TYPE");
   if (event?.environment === "production" && !["OBSERVED", "TEST"].includes(event.event_class)) errors.push("NON_OBSERVED_PRODUCTION_EVENT");
   if (event?.event_class === "PREDICTED" && !["PREDICTED", "PLANNED"].includes(event.status)) errors.push("PREDICTION_CANNOT_BE_COMPLETED");
   if (event?.payload && (Array.isArray(event.payload) || typeof event.payload !== "object")) errors.push("PAYLOAD_MUST_BE_OBJECT");
