@@ -71,6 +71,7 @@ export const crm = {
         .set({ stage: input.stage, updatedAt: new Date() })
         .where(eq(schema.leads.id, input.id))
         .returning();
+      if (!lead) throw new Error("Lead não encontrado.");
       await log("move_stage", input.id, `Movido para ${input.stage}`);
       await persistOperationalEvent({ event_type: "crm.lead.stage_changed", source_component: "crm", status: "STAGE_CHANGED", payload: { lead_id: input.id, stage: input.stage } });
       return lead;
@@ -93,6 +94,7 @@ export const crm = {
         .set({ ...rest, updatedAt: new Date() })
         .where(eq(schema.leads.id, id))
         .returning();
+      if (!lead) throw new Error("Lead não encontrado.");
       await log("update", id, "Lead atualizado");
       await persistOperationalEvent({ event_type: "crm.lead.updated", source_component: "crm", status: "LEAD_UPDATED", payload: { lead_id: id } });
       return lead;
@@ -101,7 +103,8 @@ export const crm = {
   remove: base
     .input(z.object({ id: z.number() }))
     .handler(async ({ input }) => {
-      await db.delete(schema.leads).where(eq(schema.leads.id, input.id));
+      const [deleted] = await db.delete(schema.leads).where(eq(schema.leads.id, input.id)).returning({ id: schema.leads.id });
+      if (!deleted) throw new Error("Lead não encontrado.");
       await log("delete", input.id, "Lead removido");
       await persistOperationalEvent({ event_type: "crm.lead.deleted", source_component: "crm", status: "LEAD_DELETED", payload: { lead_id: input.id } });
       return { ok: true };
