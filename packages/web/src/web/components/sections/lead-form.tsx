@@ -95,6 +95,7 @@ export function LeadForm() {
                     </label>
                     <select
                       id="lead-service"
+                      aria-label="Serviço de interesse"
                       value={form.service}
                       onChange={set("service")}
                       className="w-full rounded-lg bg-[rgba(4,6,15,0.6)] border border-[var(--border)] px-4 py-3 text-white text-[0.95rem] outline-none focus:border-[#3b82f6]"
@@ -112,6 +113,7 @@ export function LeadForm() {
                     </label>
                     <textarea
                       id="lead-message"
+                      aria-label="Mensagem (opcional)"
                       value={form.message}
                       onChange={set("message")}
                       rows={2}
