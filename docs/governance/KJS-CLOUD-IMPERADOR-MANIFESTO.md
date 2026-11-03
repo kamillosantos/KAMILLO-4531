@@ -1,6 +1,6 @@
 # KJS Cloud Imperador Ω — Manifesto Operacional Multi-LLM
 
-**Versão:** 1.2.0  
+**Versão:** 1.3.0  
 **Fonte operacional canônica:** `docs/governance/KJS-OPERATING-SOURCE-OF-TRUTH.md`  
 **Skill canônica:** `.github/skills/AUTONOMOUS-RESOLUTION-OMEGA/SKILL.md`
 
@@ -75,3 +75,14 @@ As duas rotinas diárias foram cadastradas como automações recorrentes flexív
 - A sincronização entre GPT KJS, Meta KJS, Gemini KJS e Cloud Imperador ocorre por fonte versionada e handoff com confirmação de recebimento; não por memória presumida.
 - O estado técnico do runtime, as branches experimentais e as dependências externas são registrados separadamente de deploy e certificação.
 - Skill de transferência: .github/skills/KJS-MULTI-LLM-HANDOFF/SKILL.md.
+
+
+## Evolução 1.3.0 — KJS Cloud próprio e inteligência operacional
+- KJS Cloud é o plano de controle/software proprietário construído na aplicação existente; não presumir Render, Vercel, outro hosting ou novo projeto/servidor.
+- Preservar Node.js/Express e SQLite/WAL como baseline até necessidade mensurada; não compartilhar um arquivo SQLite entre réplicas.
+- Copilot é ferramenta de desenvolvimento, não infraestrutura ou memória compartilhada.
+- O pipeline de inteligência transforma fontes em Skills originais por evidência, validação, adaptação KJS, experimento mensurável e handoff com ACK.
+- VTSD é referência de pesquisa; seus resultados não comprovam demanda ou receita KJS. GeeLark serve apenas como referência de padrões de workflow/API; a adaptação deve respeitar autorização e regras das plataformas.
+- ROI 100x permanece alvo aspiracional até ser medido.
+- Meta Model API é inferência; não equivale à memória pessoal do Meta AI. Integração Copilot ainda não verificada.
+- A branch `feat/kjs-cloud-core-foundation` contém o primeiro corte de identidade/linhagem; sem CI, workers, scheduler, provisionamento ou deploy confirmados.
