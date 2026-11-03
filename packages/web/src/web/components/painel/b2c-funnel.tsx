@@ -136,6 +136,7 @@ export function B2CFunnel() {
           <form onSubmit={submit} className="grid gap-3 md:grid-cols-5">
             <Field label="Gateway">
               <select
+                aria-label="Gateway"
                 className={inputCls}
                 value={form.gateway}
                 onChange={(e) => setForm({ ...form, gateway: e.target.value })}
@@ -147,6 +148,7 @@ export function B2CFunnel() {
             </Field>
             <Field label="Produto">
               <input
+                aria-label="Produto"
                 className={inputCls}
                 value={form.product}
                 onChange={(e) => setForm({ ...form, product: e.target.value })}
@@ -155,6 +157,7 @@ export function B2CFunnel() {
             </Field>
             <Field label="Tipo de oferta">
               <select
+                aria-label="Tipo de oferta"
                 className={inputCls}
                 value={form.offerType}
                 onChange={(e) =>
@@ -170,6 +173,7 @@ export function B2CFunnel() {
             </Field>
             <Field label="Valor (R$)">
               <input
+                aria-label="Valor (R$)"
                 className={inputCls}
                 type="number"
                 value={form.amount}
@@ -179,6 +183,7 @@ export function B2CFunnel() {
             </Field>
             <Field label="Comprador">
               <input
+                aria-label="Comprador"
                 className={inputCls}
                 value={form.buyerName}
                 onChange={(e) =>

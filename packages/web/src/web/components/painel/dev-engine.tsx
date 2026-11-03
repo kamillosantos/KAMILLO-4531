@@ -102,6 +102,7 @@ export function DevEngine() {
           <form onSubmit={submit} className="space-y-3">
             <Field label="Nome do projeto">
               <input
+                aria-label="Nome do projeto"
                 className={inputCls}
                 value={form.projectName}
                 onChange={(e) =>
@@ -143,6 +144,7 @@ export function DevEngine() {
             <div className="grid grid-cols-2 gap-2">
               <Field label="Nível de segurança">
                 <select
+                  aria-label="Nível de segurança"
                   className={inputCls}
                   value={form.securityLevel}
                   onChange={(e) =>

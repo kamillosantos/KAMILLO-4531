@@ -80,6 +80,7 @@ export function Roboavaliador() {
           <form onSubmit={submit} className="space-y-3">
             <Field label="Domínio de envio">
               <input
+                aria-label="Domínio de envio"
                 className={inputCls}
                 value={form.domain}
                 onChange={(e) => setForm({ ...form, domain: e.target.value })}
@@ -110,6 +111,7 @@ export function Roboavaliador() {
             </div>
             <Field label="Spam score (0-10, quanto menor melhor)">
               <input
+                aria-label="Spam score (0-10, quanto menor melhor)"
                 className={inputCls}
                 type="number"
                 step="0.1"

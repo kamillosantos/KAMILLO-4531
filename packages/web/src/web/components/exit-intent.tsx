@@ -34,14 +34,17 @@ export function ExitIntent() {
       open
       className="fixed inset-0 z-[9999] m-0 grid h-full w-full max-h-none max-w-none place-items-center border-0 bg-transparent p-5"
       style={{ background: "rgba(2,6,17,0.82)", backdropFilter: "blur(10px)" }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) setOpen(false);
-      }}
       aria-modal="true"
       aria-label="Oferta de diagnóstico gratuito"
     >
+      <button
+        type="button"
+        className="absolute inset-0 z-0 h-full w-full cursor-default border-0 bg-transparent"
+        aria-label="Fechar oferta de diagnóstico"
+        onClick={() => setOpen(false)}
+      />
       <div
-        className="glass relative w-full max-w-[520px] rounded-2xl p-8 text-center glow-primary"
+        className="glass relative z-10 w-full max-w-[520px] rounded-2xl p-8 text-center glow-primary"
         style={{ borderColor: "rgba(96,165,250,0.4)" }}
       >
         <button

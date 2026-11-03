@@ -102,6 +102,7 @@ export function RevOps() {
           <form onSubmit={submit} className="grid gap-3 md:grid-cols-5">
             <Field label="Nome">
               <input
+                aria-label="Nome"
                 className={inputCls}
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -110,6 +111,7 @@ export function RevOps() {
             </Field>
             <Field label="Canal">
               <select
+                aria-label="Canal"
                 className={inputCls}
                 value={form.channel}
                 onChange={(e) => setForm({ ...form, channel: e.target.value })}
@@ -121,6 +123,7 @@ export function RevOps() {
             </Field>
             <Field label="Investimento informado (R$)">
               <input
+                aria-label="Investimento informado (R$)"
                 className={inputCls}
                 type="number"
                 value={form.spend}
@@ -129,6 +132,7 @@ export function RevOps() {
             </Field>
             <Field label="Receita informada (R$)">
               <input
+                aria-label="Receita informada (R$)"
                 className={inputCls}
                 type="number"
                 value={form.revenue}
@@ -137,6 +141,7 @@ export function RevOps() {
             </Field>
             <Field label="ROAS alvo">
               <input
+                aria-label="ROAS alvo"
                 className={inputCls}
                 type="number"
                 step="0.5"

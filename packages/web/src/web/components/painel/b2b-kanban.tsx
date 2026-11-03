@@ -128,6 +128,7 @@ export function B2BKanban() {
           <form onSubmit={submit} className="grid gap-3 md:grid-cols-5">
             <Field label="Nome">
               <input
+                aria-label="Nome"
                 className={inputCls}
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -136,6 +137,7 @@ export function B2BKanban() {
             </Field>
             <Field label="Contato">
               <input
+                aria-label="Contato"
                 className={inputCls}
                 value={form.contact}
                 onChange={(e) => setForm({ ...form, contact: e.target.value })}
@@ -144,6 +146,7 @@ export function B2BKanban() {
             </Field>
             <Field label="Empresa">
               <input
+                aria-label="Empresa"
                 className={inputCls}
                 value={form.company}
                 onChange={(e) => setForm({ ...form, company: e.target.value })}
@@ -152,6 +155,7 @@ export function B2BKanban() {
             </Field>
             <Field label="Score (0-100)">
               <input
+                aria-label="Score (0-100)"
                 className={inputCls}
                 type="number"
                 value={form.score}
@@ -161,6 +165,7 @@ export function B2BKanban() {
             </Field>
             <Field label="LTV previsto (R$)">
               <input
+                aria-label="LTV previsto (R$)"
                 className={inputCls}
                 type="number"
                 value={form.ltvPredicted}
