@@ -3,6 +3,7 @@ import { desc } from "drizzle-orm";
 import { base } from "../__core/app";
 import { db } from "../database";
 import * as schema from "../database/schema";
+import { persistOperationalEvent } from "../observability/persist-event";
 
 const GATEWAYS = [
   "Hotmart",
@@ -84,6 +85,7 @@ export const checkouts = {
         actor: "painel",
         details: `${row.gateway} · ${row.product} · ${row.offerType}`,
       });
+      await persistOperationalEvent({ event_type: "checkout.recorded", source_component: "checkout", status: row.status.toUpperCase(), payload: { checkout_id: row.id, gateway: row.gateway, offer_type: row.offerType } });
       return row;
     }),
 };
