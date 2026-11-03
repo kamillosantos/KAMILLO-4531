@@ -47,14 +47,18 @@ export function DataGenius() {
     }
   }, [environment, eventClass]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+    const timer = window.setInterval(() => { void load(); }, 15_000);
+    return () => window.clearInterval(timer);
+  }, [load]);
 
   return (
     <section className="space-y-5">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 text-[#00f0ff]"><Activity className="h-5 w-5" /><h1 className="text-lg font-bold tracking-widest">DATA GENIUS · EVENT LEDGER</h1></div>
-          <p className="mt-1 text-xs text-[#78869a]">Registros persistidos no banco desta aplicação. Não representa telemetria global ainda.</p>
+          <p className="mt-1 text-xs text-[#78869a]">Registros persistidos no banco desta aplicação · atualização automática a cada 15s · sem fontes não instrumentadas.</p>
         </div>
         <button onClick={() => void load()} disabled={loading} className="flex items-center gap-2 rounded border border-[#263342] px-3 py-2 text-xs text-[#cbd5e1] hover:border-[#00f0ff] disabled:opacity-50">
           <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} /> Atualizar
