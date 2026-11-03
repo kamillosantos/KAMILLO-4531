@@ -12,6 +12,7 @@ import { devEngine } from "./routes/dev-engine";
 import { inbox } from "./routes/inbox";
 import { createCrmSession, hasCrmSession, passwordsMatch } from "./security/crm-session";
 import { mountCreativeOrchestrator } from "./creative-orchestrator";
+import { validateKjsEvent, type KjsOperationalEvent } from "./observability/event-contract";
 import { db } from "./database";
 import * as schema from "./database/schema";
 
@@ -70,6 +71,50 @@ app.get("/api/crm/session", (c) => {
   c.header("Cache-Control", "no-store");
   return c.json({ authenticated: hasCrmSession(c.req.raw.headers) });
 });
+// Cross-repository Data Genius ingestion. Producers must send a complete, validated event.
+function constantTimeEqual(left: string, right: string) {
+  if (left.length !== right.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < left.length; i++) mismatch |= left.charCodeAt(i) ^ right.charCodeAt(i);
+  return mismatch === 0;
+}
+
+app.post("/api/observability/ingest", async (c) => {
+  const secret = process.env.DATA_GENIUS_INGEST_TOKEN;
+  if (!secret || secret.length < 32) return c.json({ error: "INGEST_NOT_CONFIGURED" }, 503);
+  const authorization = c.req.header("authorization") || "";
+  const supplied = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+  if (!constantTimeEqual(supplied, secret)) return c.json({ error: "UNAUTHORIZED" }, 401);
+  const raw = await c.req.text();
+  if (raw.length > 48_000) return c.json({ error: "PAYLOAD_TOO_LARGE" }, 413);
+  let event: KjsOperationalEvent;
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return c.json({ error: "INVALID_EVENT" }, 400);
+    event = parsed as KjsOperationalEvent;
+  } catch {
+    return c.json({ error: "INVALID_JSON" }, 400);
+  }
+  const errors = validateKjsEvent(event);
+  if (errors.length) return c.json({ error: "EVENT_VALIDATION_FAILED", details: errors }, 400);
+  try {
+    await db.insert(schema.ecosystemEvents).values({
+      eventId: event.event_id, eventType: event.event_type, schemaVersion: event.schema_version,
+      occurredAt: event.occurred_at, sourceSystem: event.source_system,
+      sourceComponent: event.source_component, sourceVersion: event.source_version,
+      environment: event.environment, eventClass: event.event_class,
+      correlationId: event.correlation_id, actorType: event.actor_type,
+      actorId: event.actor_id, status: event.status,
+      payloadJson: JSON.stringify(event.payload || {}),
+    });
+    return c.json({ accepted: true, event_id: event.event_id }, 201);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (/unique|constraint|duplicate/i.test(message)) return c.json({ accepted: true, duplicate: true, event_id: event.event_id }, 200);
+    return c.json({ error: "EVENT_PERSISTENCE_FAILED" }, 500);
+  }
+});
+
 // Data Genius read API — authenticated CRM operator only. No synthetic rows are generated.
 app.get("/api/observability/events", async (c) => {
   c.header("Cache-Control", "no-store");
