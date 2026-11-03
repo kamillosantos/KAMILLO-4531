@@ -14,6 +14,7 @@ type EventRow = {
   status: string;
   payload: unknown;
 };
+type HealthResponse = { status: string; ledger: string; ingest: string; action?: string };
 type EventResponse = {
   source: string;
   evidence_class: string;
@@ -24,6 +25,7 @@ type EventResponse = {
 
 export function DataGenius() {
   const [data, setData] = useState<EventResponse | null>(null);
+  const [health, setHealth] = useState<HealthResponse | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [environment, setEnvironment] = useState("all");
@@ -33,6 +35,10 @@ export function DataGenius() {
     setLoading(true);
     setError("");
     try {
+      const healthResponse = await fetch("/api/observability/health", { credentials: "same-origin", cache: "no-store" });
+      const healthPayload = await healthResponse.json() as HealthResponse;
+      setHealth(healthPayload);
+      if (!healthResponse.ok) throw new Error(healthPayload.action || "Data Genius ainda precisa de ativação no banco.");
       const params = new URLSearchParams({ limit: "100" });
       if (environment !== "all") params.set("environment", environment);
       if (eventClass !== "all") params.set("event_class", eventClass);
@@ -79,6 +85,8 @@ export function DataGenius() {
       </div>
 
       {error && <div className="flex items-start gap-2 rounded border border-amber-900/60 bg-amber-950/20 p-3 text-xs text-amber-200"><ShieldAlert className="h-4 w-4 shrink-0" />{error}</div>}
+
+      {health && <div className="rounded border border-[#263342] bg-[#0d0f12] p-3 text-xs text-[#cbd5e1]">LEDGER: <strong className={health.ledger === "READY" ? "text-emerald-400" : "text-amber-300"}>{health.ledger}</strong> <span className="mx-2 text-[#526071]">·</span> RECEIVER: <strong>{health.ingest}</strong></div>}
 
       <div className="grid gap-3 sm:grid-cols-3">
         <div className="rounded border border-[#263342] bg-[#0d0f12] p-4"><div className="text-[10px] text-[#78869a]">REGISTROS RETORNADOS</div><div className="mt-2 text-2xl font-bold text-[#00f0ff]">{data?.count ?? "—"}</div></div>
