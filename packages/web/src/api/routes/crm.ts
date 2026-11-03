@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { base } from "../__core/app";
 import { db } from "../database";
 import * as schema from "../database/schema";
+import { persistOperationalEvent } from "../observability/persist-event";
 
 const STAGES = ["T-04", "T-03", "T-02", "T-01"] as const;
 
@@ -58,6 +59,7 @@ export const crm = {
         })
         .returning();
       await log("create", lead.id, `Lead criado no estágio ${lead.stage}`);
+      await persistOperationalEvent({ event_type: "crm.lead.created", source_component: "crm", status: "LEAD_CREATED", payload: { lead_id: lead.id, stage: lead.stage, source: "painel" } });
       return lead;
     }),
 
@@ -70,6 +72,7 @@ export const crm = {
         .where(eq(schema.leads.id, input.id))
         .returning();
       await log("move_stage", input.id, `Movido para ${input.stage}`);
+      await persistOperationalEvent({ event_type: "crm.lead.stage_changed", source_component: "crm", status: "STAGE_CHANGED", payload: { lead_id: input.id, stage: input.stage } });
       return lead;
     }),
 
@@ -91,6 +94,7 @@ export const crm = {
         .where(eq(schema.leads.id, id))
         .returning();
       await log("update", id, "Lead atualizado");
+      await persistOperationalEvent({ event_type: "crm.lead.updated", source_component: "crm", status: "LEAD_UPDATED", payload: { lead_id: id } });
       return lead;
     }),
 
@@ -99,6 +103,7 @@ export const crm = {
     .handler(async ({ input }) => {
       await db.delete(schema.leads).where(eq(schema.leads.id, input.id));
       await log("delete", input.id, "Lead removido");
+      await persistOperationalEvent({ event_type: "crm.lead.deleted", source_component: "crm", status: "LEAD_DELETED", payload: { lead_id: input.id } });
       return { ok: true };
     }),
 };
