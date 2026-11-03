@@ -4,7 +4,7 @@ process.env.DATABASE_URL = "file::memory:";
 process.env.DATA_GENIUS_INGEST_TOKEN = "test-ingest-token-longer-than-thirty-two-characters";
 process.env.KJS_CRM_SESSION_SECRET = "test-crm-session-secret-longer-than-thirty-two-characters";
 
-const [{ default: app }, { db }, { sql }, { eq }, { ecosystemEvents }, { createCrmSession }, { persistOperationalEvent }] = await Promise.all([
+const [{ default: app }, { db }, { sql, eq }, { ecosystemEvents }, { createCrmSession }, { persistOperationalEvent }] = await Promise.all([
   import("../index"),
   import("../database"),
   import("drizzle-orm").then((module) => ({ sql: module.sql, eq: module.eq })),
