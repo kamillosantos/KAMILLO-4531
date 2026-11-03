@@ -327,7 +327,7 @@ Conhecimento desta revisão deve ser compartilhado por handoff com ID, fonte/ver
 
 #### kamillosantos/KAMILLO-4531
 - Snapshot de código anterior ao registro desta reunião: branch feat/crm-kanban-evidence com 47 commits à frente e 0 atrás de main; HEAD 4d8461f2582fb17c27d0392219cc7ea81e6aee5f.
-- PR #2: aberta, Draft, base main. No snapshot inicial desta revisão constava mergeable=true; após os commits de documentação, a última consulta retornou mergeable=false. A causa não foi detalhada; manter sem merge e investigar conflito/estado antes de qualquer ação. O head da PR é a referência dinâmica para o estado atual da branch.
+- PR #2: aberta, Draft, base main. As leituras de mergeability oscilaram entre true e false; a reconsulta direta retornou true com mergeable_state=unstable. Na mesma janela, a API da PR reportou head 8ebaa23cb996bd5bf7eeb4e95bbeabed2258699e, enquanto a referência da branch já reportava f1b949be7e5209236cdaaec41295448768e5355c. Tratar o snapshot da PR como possivelmente defasado e não usar mergeable=true como autorização para merge; atualizar/validar o head e revisar o diff antes de qualquer promoção.
 - GitHub Actions KJS CI run #36: completed / success no snapshot de código 4d8461f2582fb17c27d0392219cc7ea81e6aee5f. Job único confirmou instalação, ASTRA unit tests, typecheck, lint e build web aprovados.
 - Os commits seguintes desta reunião alteraram somente a documentação canônica. A consulta não retornou novo workflow run nem status de CI para esses commits documentais. Para o número atual de commits e o HEAD corrente, consultar a branch/PR; não fixar um número no documento que é atualizado pela própria reunião.
 - Nenhum desses resultados comprova deploy, health check público, integração externa ou operação em produção.
