@@ -4,11 +4,13 @@ process.env.DATABASE_URL = "file::memory:";
 process.env.DATA_GENIUS_INGEST_TOKEN = "test-ingest-token-longer-than-thirty-two-characters";
 process.env.KJS_CRM_SESSION_SECRET = "test-crm-session-secret-longer-than-thirty-two-characters";
 
-const [{ default: app }, { db }, { sql }, { createCrmSession }] = await Promise.all([
+const [{ default: app }, { db }, { sql }, { eq }, { ecosystemEvents }, { createCrmSession }, { persistOperationalEvent }] = await Promise.all([
   import("../index"),
   import("../database"),
-  import("drizzle-orm"),
+  import("drizzle-orm").then((module) => ({ sql: module.sql, eq: module.eq })),
+  import("../database/schema").then((module) => ({ ecosystemEvents: module.ecosystemEvents })),
   import("../security/crm-session"),
+  import("./persist-event"),
 ]);
 
 const eventId = "f2a0d2c7-6f13-4f2d-9f1e-3a6d3e9a1c21";
@@ -53,6 +55,19 @@ beforeAll(async () => {
 });
 
 describe("Data Genius ingest and query API", () => {
+  test("persists CRM operational events without contact PII", async () => {
+    const eventId = await persistOperationalEvent({
+      event_type: "crm.lead.created",
+      source_component: "crm",
+      status: "LEAD_CREATED",
+      payload: { lead_id: 42, stage: "T-04", source: "painel" },
+    });
+    const rows = await db.select().from(ecosystemEvents).where(eq(ecosystemEvents.eventId, eventId));
+    expect(rows.length).toBe(1);
+    expect(rows[0]?.eventType).toBe("crm.lead.created");
+    expect(rows[0]?.payloadJson).not.toContain("email");
+  });
+
   test("reports readiness only to an authenticated operator", async () => {
     const denied = await app.request("/api/observability/health");
     expect(denied.status).toBe(401);
