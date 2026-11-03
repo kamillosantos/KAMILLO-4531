@@ -1,4 +1,5 @@
 import type { RouterClient } from "@orpc/server";
+import { desc, eq, and } from "drizzle-orm";
 import { createApp } from "./__core/app";
 import { ping } from "./routes/ping";
 import { leads } from "./routes/leads";
@@ -69,6 +70,31 @@ app.get("/api/crm/session", (c) => {
   c.header("Cache-Control", "no-store");
   return c.json({ authenticated: hasCrmSession(c.req.raw.headers) });
 });
+// Data Genius read API — authenticated CRM operator only. No synthetic rows are generated.
+app.get("/api/observability/events", async (c) => {
+  c.header("Cache-Control", "no-store");
+  if (!hasCrmSession(c.req.raw.headers)) return c.json({ error: "UNAUTHORIZED" }, 401);
+  const requestedLimit = Number(c.req.query("limit") || 100);
+  const limit = Number.isFinite(requestedLimit) ? Math.min(200, Math.max(1, Math.floor(requestedLimit))) : 100;
+  const environment = c.req.query("environment");
+  const eventClass = c.req.query("event_class");
+  if (environment && !["development", "staging", "production"].includes(environment)) return c.json({ error: "INVALID_ENVIRONMENT" }, 400);
+  if (eventClass && !["OBSERVED", "TEST", "PREDICTED", "SYNTHETIC"].includes(eventClass)) return c.json({ error: "INVALID_EVENT_CLASS" }, 400);
+  const filters = [];
+  if (environment) filters.push(eq(schema.ecosystemEvents.environment, environment));
+  if (eventClass) filters.push(eq(schema.ecosystemEvents.eventClass, eventClass));
+  const query = db.select().from(schema.ecosystemEvents);
+  const rows = await (filters.length ? query.where(and(...filters)) : query)
+    .orderBy(desc(schema.ecosystemEvents.createdAt)).limit(limit);
+  return c.json({
+    source: "KAMILLO-4531_DATABASE",
+    evidence_class: "PERSISTED_RECORDS_ONLY",
+    count: rows.length,
+    events: rows.map((row) => ({ ...row, payload: (() => { try { return JSON.parse(row.payloadJson); } catch { return {}; } })() })),
+    integrations_not_instrumented: ["IMPRRSDOR", "CRM_LLM", "WHATSAPP_CLOUD_API", "MEDIA_RENDER_WORKERS", "EXTERNAL_REPOSITORIES"],
+  });
+});
+
 app.delete("/api/crm/session", (c) => {
   const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
   c.header("Set-Cookie", "kjs_crm_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0" + secure);
