@@ -8,8 +8,6 @@ import { campaigns } from "./routes/campaigns";
 import { preflight } from "./routes/preflight";
 import { audit } from "./routes/audit";
 import { devEngine } from "./routes/dev-engine";
-import { db } from "./database";
-import * as schema from "./database/schema";
 
 // API features are oRPC procedures, one file per feature in ./routes/,
 // composed into this router — typed end-to-end via the clients
@@ -34,10 +32,9 @@ export type AppRouterClient = RouterClient<AppRouter>;
 
 const app = createApp(router);
 
-// ── Gateway webhook ingestion (B2C engine) ─────────────────────────
-// External infoproduct gateways POST purchase events here. Idempotent
-// on x-idempotency-key. Records land in the checkouts ledger and are
-// surfaced live in /painel → B2C module.
+// Generic gateway webhook is intentionally fail-closed.
+// Provider-specific signature verification and event normalization must be
+// implemented before any external event can affect the checkout ledger.
 const GATEWAY_SLUGS = [
   "hotmart",
   "kiwify",
@@ -50,45 +47,17 @@ const GATEWAY_SLUGS = [
 app.post("/api/webhooks/:gateway", async (c) => {
   const slug = c.req.param("gateway").toLowerCase();
   if (!GATEWAY_SLUGS.includes(slug as (typeof GATEWAY_SLUGS)[number])) {
-    return c.json({ error: "unknown gateway" }, 404);
+    return c.json({ error: "unknown_gateway" }, 404);
   }
-  let body: Record<string, unknown> = {};
-  try {
-    body = await c.req.json();
-  } catch {
-    body = {};
-  }
-  const idem =
-    c.req.header("x-idempotency-key") || `${slug}_${Date.now()}`;
 
-  const gatewayName = slug.charAt(0).toUpperCase() + slug.slice(1);
-  try {
-    const [row] = await db
-      .insert(schema.checkouts)
-      .values({
-        gateway: gatewayName,
-        product: String(body.product ?? body.product_name ?? "Produto"),
-        offerType: String(body.offer_type ?? body.offerType ?? "main"),
-        buyerName: body.buyer_name ? String(body.buyer_name) : undefined,
-        buyerEmail: body.buyer_email ? String(body.buyer_email) : undefined,
-        amount: Number(body.amount ?? body.value ?? 0),
-        currency: String(body.currency ?? "BRL"),
-        status: String(body.status ?? "approved"),
-        idempotencyKey: idem,
-      })
-      .returning();
-    await db.insert(schema.auditLogs).values({
-      action: "webhook_ingest",
-      entity: "checkout",
-      entityId: String(row.id),
-      actor: gatewayName,
-      details: `Webhook ${gatewayName} recebido`,
-    });
-    return c.json({ received: true, id: row.id }, 200);
-  } catch {
-    // duplicate idempotency key — already processed
-    return c.json({ received: true, duplicate: true }, 200);
-  }
+  return c.json(
+    {
+      error: "webhook_ingestion_disabled",
+      reason: "provider_signature_verification_not_configured",
+      gateway: slug,
+    },
+    503,
+  );
 });
 
 export default app;

@@ -45,6 +45,7 @@ export const checkouts = {
       approved: approved.length,
       revenue,
       aov,
+      unverified: rows.length - approved.length,
       byOffer,
     };
   }),
@@ -59,7 +60,6 @@ export const checkouts = {
         buyerEmail: z.string().max(200).optional(),
         amount: z.number().min(0),
         currency: z.string().max(8).optional(),
-        status: z.string().max(40).optional(),
       }),
     )
     .handler(async ({ input }) => {
@@ -73,7 +73,7 @@ export const checkouts = {
           buyerEmail: input.buyerEmail,
           amount: input.amount,
           currency: input.currency ?? "BRL",
-          status: input.status ?? "approved",
+          status: "manual_unverified",
           idempotencyKey: `manual_${Date.now()}`,
         })
         .returning();

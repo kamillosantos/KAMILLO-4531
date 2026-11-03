@@ -106,7 +106,7 @@ export function GarimpoTool() {
                 Ex: "emagrecimento feminino", "consultoria financeira", "curso de inglês".
               </p>
               <input
-                autoFocus
+                aria-label="Nicho ou produto"
                 value={niche}
                 onChange={(e) => setNiche(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && niche.trim().length > 1 && setPhase("ticket")}
@@ -192,6 +192,7 @@ export function GarimpoTool() {
               </p>
               <form onSubmit={submit} className="mt-5 space-y-3">
                 <input
+                  aria-label="Seu nome"
                   required
                   minLength={2}
                   value={lead.name}
@@ -200,6 +201,7 @@ export function GarimpoTool() {
                   className="quiz-input"
                 />
                 <input
+                  aria-label="WhatsApp ou e-mail"
                   required
                   minLength={3}
                   value={lead.contact}

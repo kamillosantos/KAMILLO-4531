@@ -150,6 +150,7 @@ export function LeadQuiz({ articleTitle }: { articleTitle?: string }) {
               </p>
               <form onSubmit={submit} className="mt-5 space-y-3">
                 <input
+                  aria-label="Seu nome"
                   required
                   minLength={2}
                   value={lead.name}
@@ -158,6 +159,7 @@ export function LeadQuiz({ articleTitle }: { articleTitle?: string }) {
                   className="quiz-input"
                 />
                 <input
+                  aria-label="WhatsApp ou e-mail"
                   required
                   minLength={3}
                   value={lead.contact}

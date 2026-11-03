@@ -29,10 +29,7 @@ export const devEngine = {
       }),
     )
     .handler(async ({ input }) => {
-      const securityAudit =
-        input.securityLevel === "ENTERPRISE_HIGH"
-          ? "HMAC_JWT_ENCRYPTED"
-          : "STANDARD";
+      const securityAudit = "NOT_VERIFIED";
 
       const [row] = await db
         .insert(schema.devEngineRuns)
@@ -43,8 +40,8 @@ export const devEngine = {
           customFeatures: JSON.stringify(input.customFeatures),
           apiFirstReady: input.apiFirstReady,
           securityAudit,
-          signature: "BRADATA_SOFTWARE_HOUSE_VERIFIED",
-          status: "SYSTEM_ARCHITECTED",
+          signature: "UNVERIFIED",
+          status: "REQUEST_RECORDED",
         })
         .returning();
 
@@ -59,8 +56,8 @@ export const devEngine = {
       });
 
       return {
-        status: "SYSTEM_ARCHITECTED",
-        signature: "BRADATA_SOFTWARE_HOUSE_VERIFIED",
+        status: "REQUEST_RECORDED",
+        signature: "UNVERIFIED",
         run: row,
       };
     }),

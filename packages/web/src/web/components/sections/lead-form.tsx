@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Loader2, CheckCircle2, MessageCircle, Send } from "lucide-react";
 import { Reveal } from "../reveal";
 import { useCreateLead } from "../../queries/leads";
@@ -90,10 +90,12 @@ export function LeadForm() {
                     placeholder="Nome da empresa"
                   />
                   <div>
-                    <label className="block text-[#93a2c4] text-[0.82rem] font-semibold mb-1.5">
+                    <label htmlFor="lead-service" className="block text-[#93a2c4] text-[0.82rem] font-semibold mb-1.5">
                       Serviço de interesse
                     </label>
                     <select
+                      id="lead-service"
+                      aria-label="Serviço de interesse"
                       value={form.service}
                       onChange={set("service")}
                       className="w-full rounded-lg bg-[rgba(4,6,15,0.6)] border border-[var(--border)] px-4 py-3 text-white text-[0.95rem] outline-none focus:border-[#3b82f6]"
@@ -106,10 +108,12 @@ export function LeadForm() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[#93a2c4] text-[0.82rem] font-semibold mb-1.5">
+                    <label htmlFor="lead-message" className="block text-[#93a2c4] text-[0.82rem] font-semibold mb-1.5">
                       Mensagem (opcional)
                     </label>
                     <textarea
+                      id="lead-message"
+                      aria-label="Mensagem (opcional)"
                       value={form.message}
                       onChange={set("message")}
                       rows={2}
@@ -151,11 +155,14 @@ function Field({
   label,
   ...props
 }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+  const id = useId();
+
   return (
     <div>
-      <label className="block text-[#93a2c4] text-[0.82rem] font-semibold mb-1.5">{label}</label>
+      <label htmlFor={id} className="block text-[#93a2c4] text-[0.82rem] font-semibold mb-1.5">{label}</label>
       <input
         {...props}
+        id={id}
         className="w-full rounded-lg bg-[rgba(4,6,15,0.6)] border border-[var(--border)] px-4 py-3 text-white text-[0.95rem] outline-none focus:border-[#3b82f6] placeholder:text-[#5f6f92]"
       />
     </div>

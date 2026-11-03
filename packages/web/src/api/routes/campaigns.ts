@@ -23,7 +23,11 @@ export const campaigns = {
       active,
       spend,
       revenue,
+      // Current campaign values are operator-entered; they are not provider evidence.
       roas: spend > 0 ? revenue / spend : 0,
+      metricOrigin: "MANUAL_INPUT",
+      evidenceStatus: "UNVERIFIED",
+      verifiedRoas: null,
     };
   }),
 

@@ -76,24 +76,24 @@ export function DevEngine() {
     <div>
       <SectionTitle
         icon={<Code2 className="h-4 w-4" />}
-        title="Kamillo Dev Engine · Software Architecture"
-        subtitle="Validação de arquitetura corporativa (API-first, alta escala) com assinatura e trilha de auditoria."
+        title="Kamillo Dev Engine · Registro de Especificações"
+        subtitle="Registro das especificações enviadas; não representa arquitetura gerada nem auditoria criptográfica executada."
         accent="green"
       />
 
       <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Stat label="Projetos arquitetados" value={String(runs.length)} accent="green" />
-        <Stat label="Enterprise High" value={String(enterprise)} accent="cyan" />
+        <Stat label="Solicitações registradas" value={String(runs.length)} accent="green" />
+        <Stat label="Configuração Enterprise" value={String(enterprise)} accent="cyan" />
         <Stat
-          label="API-first ready"
+          label="Solicitações API-first"
           value={String(runs.filter((r) => r.apiFirstReady).length)}
           accent="white"
         />
         <Stat
           label="Assinatura"
-          value="VERIFIED"
+          value="NÃO VERIFICADA"
           accent="purple"
-          hint="BRADATA Software House"
+          hint="Sem validação criptográfica comprovada"
         />
       </div>
 
@@ -102,6 +102,7 @@ export function DevEngine() {
           <form onSubmit={submit} className="space-y-3">
             <Field label="Nome do projeto">
               <input
+                aria-label="Nome do projeto"
                 className={inputCls}
                 value={form.projectName}
                 onChange={(e) =>
@@ -143,6 +144,7 @@ export function DevEngine() {
             <div className="grid grid-cols-2 gap-2">
               <Field label="Nível de segurança">
                 <select
+                  aria-label="Nível de segurança"
                   className={inputCls}
                   value={form.securityLevel}
                   onChange={(e) =>
@@ -150,7 +152,7 @@ export function DevEngine() {
                   }
                 >
                   <option value="ENTERPRISE_HIGH">
-                    ENTERPRISE_HIGH (HMAC/JWT)
+                    ENTERPRISE_HIGH (não verificado)
                   </option>
                   <option value="STANDARD">STANDARD</option>
                 </select>
@@ -176,11 +178,13 @@ export function DevEngine() {
             </div>
 
             <div>
-              <span className="mb-1 block text-[10px] uppercase tracking-wider text-[#606d80]">
+              <label htmlFor="dev-engine-feature" className="mb-1 block text-[10px] uppercase tracking-wider text-[#606d80]">
                 Custom features
-              </span>
+              </label>
               <div className="flex gap-2">
                 <input
+                  id="dev-engine-feature"
+                  aria-label="Custom features"
                   className={inputCls}
                   value={featInput}
                   onChange={(e) => setFeatInput(e.target.value)}

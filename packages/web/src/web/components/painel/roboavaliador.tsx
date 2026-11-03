@@ -70,8 +70,8 @@ export function Roboavaliador() {
     <div>
       <SectionTitle
         icon={<ShieldCheck className="h-4 w-4" />}
-        title="Roboavaliador · Pre-Flight de Entregabilidade"
-        subtitle="Auditoria SPF / DKIM / DMARC, spam score e rastreamento antes de qualquer disparo."
+        title="Roboavaliador · Checklist Declarativo de Entregabilidade"
+        subtitle="Checklist preenchido pelo operador. Não consulta DNS, reputação ou pixels; os dados não são verificados automaticamente."
         accent="green"
       />
 
@@ -80,6 +80,7 @@ export function Roboavaliador() {
           <form onSubmit={submit} className="space-y-3">
             <Field label="Domínio de envio">
               <input
+                aria-label="Domínio de envio"
                 className={inputCls}
                 value={form.domain}
                 onChange={(e) => setForm({ ...form, domain: e.target.value })}
@@ -110,6 +111,7 @@ export function Roboavaliador() {
             </div>
             <Field label="Spam score (0-10, quanto menor melhor)">
               <input
+                aria-label="Spam score (0-10, quanto menor melhor)"
                 className={inputCls}
                 type="number"
                 step="0.1"
@@ -129,21 +131,21 @@ export function Roboavaliador() {
 
           <div className="mt-4 rounded border border-[#1f242d] bg-[#050505] p-3">
             <div className="font-mono text-[10px] uppercase tracking-wider text-[#606d80]">
-              Veredito calculado
+              Resultado dos dados informados
             </div>
             <div className="mt-1 font-mono text-xs text-[#e0e6ed]">
               {form.spf && form.dkim && form.dmarc && Number(form.spamScore) < 5
                 ? form.trackingOk
-                  ? "✅ APROVADO — pronto para disparo"
-                  : "⚠️ ATENÇÃO — autenticação ok, mas tracking pendente"
-                : "❌ REPROVADO — corrija autenticação ou spam score"}
+                  ? "APROVADO nos dados declarados — verificação técnica pendente"
+                  : "ATENÇÃO nos dados declarados — verificação técnica pendente"
+                : "REPROVADO nos dados declarados — requer verificação técnica"}
             </div>
           </div>
         </Panel>
 
         <Panel className="overflow-hidden">
           <div className="border-b border-[#1f242d] px-4 py-2 font-mono text-[10px] uppercase tracking-wider text-[#606d80]">
-            Histórico de auditorias
+            Histórico de checklists declarados
           </div>
           <div className="max-h-[420px] overflow-y-auto">
             {history.map((h) => (
