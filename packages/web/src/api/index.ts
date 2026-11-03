@@ -232,3 +232,5 @@ app.post("/api/webhooks/:gateway", async (c) => {
     return c.json({ error: "webhook persistence failed" }, 500);
   }
 });
+
+export default app;
