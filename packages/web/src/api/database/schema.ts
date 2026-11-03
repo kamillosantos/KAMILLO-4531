@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, real, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 // ── Institutional site + CRM (B2B Belgos AI Kanban) ────────────────
 // `leads` powers both the public site capture (quiz/garimpo/contact) and
@@ -33,18 +33,22 @@ export const leads = sqliteTable("leads", {
 export const checkouts = sqliteTable("checkouts", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   gateway: text("gateway").notNull(),
+  transactionId: text("transaction_id"),
   product: text("product").notNull(),
   offerType: text("offer_type").notNull().default("main"),
   buyerName: text("buyer_name"),
   buyerEmail: text("buyer_email"),
   amount: real("amount").notNull().default(0),
   currency: text("currency").notNull().default("BRL"),
-  status: text("status").notNull().default("approved"),
+  status: text("status").notNull().default("pending"),
   idempotencyKey: text("idempotency_key").unique(),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
-});
+}, (table) => ({
+  gatewayTransactionUnique: uniqueIndex("checkouts_gateway_transaction_id_uq")
+    .on(table.gateway, table.transactionId),
+}));
 
 // ── RevOps / Neural bidding governance ─────────────────────────────
 export const campaigns = sqliteTable("campaigns", {

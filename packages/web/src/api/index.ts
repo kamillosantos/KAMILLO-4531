@@ -11,6 +11,7 @@ import { audit } from "./routes/audit";
 import { devEngine } from "./routes/dev-engine";
 import { inbox } from "./routes/inbox";
 import { createCrmSession, hasCrmSession, passwordsMatch } from "./security/crm-session";
+import { verifyGatewaySignature, getGatewayTransactionId, gatewayIdempotencyKey } from "./security/gateway-webhook";
 import { mountCreativeOrchestrator } from "./creative-orchestrator";
 import { validateKjsEvent, type KjsOperationalEvent } from "./observability/event-contract";
 import { persistOperationalEvent } from "./observability/persist-event";
@@ -174,18 +175,7 @@ app.delete("/api/crm/session", (c) => {
 // ── Signed gateway webhook ingestion (B2C engine) ────────────────────
 const GATEWAY_SLUGS = ["hotmart", "kiwify", "clickbank", "buygoods", "eduzz", "monetizze"] as const;
 
-async function verifyGatewaySignature(rawBody: string, signature: string, secret: string): Promise<boolean> {
-  if (!signature.startsWith("sha256=")) return false;
-  const key = await crypto.subtle.importKey(
-    "raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"],
-  );
-  const digest = new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(rawBody)));
-  const expected = "sha256=" + Array.from(digest, (byte) => byte.toString(16).padStart(2, "0")).join("");
-  if (signature.length !== expected.length) return false;
-  let mismatch = 0;
-  for (let i = 0; i < signature.length; i++) mismatch |= signature.charCodeAt(i) ^ expected.charCodeAt(i);
-  return mismatch === 0;
-}
+
 
 app.post("/api/webhooks/:gateway", async (c) => {
   const slug = c.req.param("gateway").toLowerCase();
@@ -206,8 +196,9 @@ app.post("/api/webhooks/:gateway", async (c) => {
     return c.json({ error: "invalid webhook signature" }, 401);
   }
 
-  const idem = c.req.header("x-idempotency-key")?.trim();
-  if (!idem || idem.length > 200) return c.json({ error: "valid x-idempotency-key required" }, 400);
+  const transactionId = getGatewayTransactionId(body.transaction_id ?? body.transactionId);
+  if (!transactionId) return c.json({ error: "valid transaction_id required" }, 400);
+  const idem = gatewayIdempotencyKey(slug, transactionId);
 
   let body: Record<string, unknown>;
   try {
@@ -232,6 +223,7 @@ app.post("/api/webhooks/:gateway", async (c) => {
   try {
     const [row] = await db.insert(schema.checkouts).values({
       gateway: gatewayName,
+      transactionId,
       product,
       offerType: String(body.offer_type ?? body.offerType ?? "main").slice(0, 80),
       buyerName: body.buyer_name ? String(body.buyer_name).slice(0, 180) : undefined,
