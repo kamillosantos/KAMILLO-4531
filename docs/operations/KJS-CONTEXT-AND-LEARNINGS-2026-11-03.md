@@ -22,9 +22,9 @@ A decisão arquitetural mais recente é desenvolver o KJS Cloud como software/co
 
 ## 3. Estado de repositórios verificado
 ### KAMILLO-4531
-- Branch `feat/crm-kanban-evidence`: 43 commits à frente e 0 atrás de `main`.
+- Branch `feat/crm-kanban-evidence`: 45 commits à frente e 0 atrás de `main` no momento da consulta; commits de documentação subsequentes podem alterar a contagem..
 - PR #2: aberta, Draft, mergeable=true.
-- CI run #22: sucesso no commit anterior `d4d8c4f3c0ab42fab6c5debd7a69742aab1aad33`; ASTRA unit tests, typecheck, lint e build web concluíram com sucesso. Runs #29 e #30 do HEAD atual `1de0f2cbf335156830f210e26f01b7e6862b89b6` estavam em andamento/pendentes nesta consulta; não declarar CI verde para o HEAD atual.
+- CI run #32: sucesso no HEAD `355246774cf98c57a3bd02278b9d139a09c663c8`; ASTRA unit tests, typecheck, lint e build web concluíram com sucesso. Run #33 para o mesmo HEAD ainda estava em andamento nesta consulta. Commits de documentação posteriores exigem confirmação própria de CI.
 - `main` não foi alterada e não houve merge/deploy nesta revisão.
 
 ### IMPRRSDOR
