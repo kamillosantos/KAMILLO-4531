@@ -71,6 +71,29 @@ app.get("/api/crm/session", (c) => {
   c.header("Cache-Control", "no-store");
   return c.json({ authenticated: hasCrmSession(c.req.raw.headers) });
 });
+// Protected readiness probe distinguishes missing schema from missing producer configuration.
+app.get("/api/observability/health", async (c) => {
+  c.header("Cache-Control", "no-store");
+  if (!hasCrmSession(c.req.raw.headers)) return c.json({ error: "UNAUTHORIZED" }, 401);
+  const ingestConfigured = Boolean(process.env.DATA_GENIUS_INGEST_TOKEN && process.env.DATA_GENIUS_INGEST_TOKEN.length >= 32);
+  try {
+    await db.select({ eventId: schema.ecosystemEvents.eventId }).from(schema.ecosystemEvents).limit(1);
+    return c.json({
+      status: "READY",
+      ledger: "READY",
+      ingest: ingestConfigured ? "CONFIGURED" : "NOT_CONFIGURED",
+      receiver: "KAMILLO-4531",
+    });
+  } catch {
+    return c.json({
+      status: "BLOCKED",
+      ledger: "MIGRATION_REQUIRED",
+      ingest: ingestConfigured ? "CONFIGURED" : "NOT_CONFIGURED",
+      action: "Apply packages/web/migrations/0001_data_genius.sql",
+    }, 503);
+  }
+});
+
 // Cross-repository Data Genius ingestion. Producers must send a complete, validated event.
 function constantTimeEqual(left: string, right: string) {
   if (left.length !== right.length) return false;
