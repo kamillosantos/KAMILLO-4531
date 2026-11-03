@@ -326,11 +326,11 @@ Conhecimento desta revisão deve ser compartilhado por handoff com ID, fonte/ver
 ### 15.2 Estado dos repositórios — revisão atualizada
 
 #### kamillosantos/KAMILLO-4531
-- Branch feat/crm-kanban-evidence: **48 commits à frente e 0 atrás de main** após o registro desta reunião.
-- HEAD atual: f5738142ec85ec49d0473a205c3f0c8b8f0bd98e.
-- PR #2: aberta, Draft, mergeable=true, base main; head atualizado para f5738142ec85ec49d0473a205c3f0c8b8f0bd98e. Permanece sem merge por decisão explícita registrada no próprio PR.
-- GitHub Actions KJS CI run #36: completed / success no commit de código imediatamente anterior, 4d8461f2582fb17c27d0392219cc7ea81e6aee5f. Job único confirmou instalação, ASTRA unit tests, typecheck, lint e build web aprovados.
-- O novo commit f5738142ec85ec49d0473a205c3f0c8b8f0bd98e contém somente o registro documental desta reunião; não retornou novo workflow run nem status de CI na consulta. Nenhum desses resultados comprova deploy, health check público, integração externa ou operação em produção.
+- Snapshot de código anterior ao registro desta reunião: branch feat/crm-kanban-evidence com 47 commits à frente e 0 atrás de main; HEAD 4d8461f2582fb17c27d0392219cc7ea81e6aee5f.
+- PR #2: aberta, Draft, mergeable=true, base main; permanece sem merge por decisão explícita registrada no próprio PR. O head da PR é a referência dinâmica para o estado atual da branch.
+- GitHub Actions KJS CI run #36: completed / success no snapshot de código 4d8461f2582fb17c27d0392219cc7ea81e6aee5f. Job único confirmou instalação, ASTRA unit tests, typecheck, lint e build web aprovados.
+- Os commits seguintes desta reunião alteraram somente a documentação canônica. A consulta não retornou novo workflow run nem status de CI para esses commits documentais. Para o número atual de commits e o HEAD corrente, consultar a branch/PR; não fixar um número no documento que é atualizado pela própria reunião.
+- Nenhum desses resultados comprova deploy, health check público, integração externa ou operação em produção.
 - Não fazer merge integral apenas porque o CI está verde. Revisar o diff acumulado, manter main preservada e exigir autorização explícita.
 
 #### kamillosantos/IMPRRSDOR
