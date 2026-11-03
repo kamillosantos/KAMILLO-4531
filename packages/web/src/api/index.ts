@@ -13,6 +13,7 @@ import { inbox } from "./routes/inbox";
 import { createCrmSession, hasCrmSession, passwordsMatch } from "./security/crm-session";
 import { mountCreativeOrchestrator } from "./creative-orchestrator";
 import { validateKjsEvent, type KjsOperationalEvent } from "./observability/event-contract";
+import { persistOperationalEvent } from "./observability/persist-event";
 import { db } from "./database";
 import * as schema from "./database/schema";
 
@@ -247,6 +248,12 @@ app.post("/api/webhooks/:gateway", async (c) => {
       entityId: String(row.id),
       actor: gatewayName,
       details: JSON.stringify({ signature_verified: true, idempotency_key: idem }),
+    });
+    await persistOperationalEvent({
+      event_type: "checkout.webhook.received",
+      source_component: "payment-webhook",
+      status: "PAYMENT_" + status.toUpperCase(),
+      payload: { checkout_id: row.id, gateway: gatewayName, payment_status: status, amount, currency },
     });
     return c.json({ received: true, id: row.id }, 201);
   } catch (error) {
