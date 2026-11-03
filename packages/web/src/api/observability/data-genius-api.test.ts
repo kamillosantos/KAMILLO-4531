@@ -116,7 +116,8 @@ describe("Data Genius ingest and query API", () => {
     });
     expect(response.status).toBe(200);
     const result = await response.json() as { count: number; events: Array<{ eventId: string; payload: unknown }> };
-    expect(result.count).toBe(1);
-    expect(result.events[0]?.eventId).toBe(eventId);
+    expect(result.count).toBe(2);
+    expect(result.events.some((row) => row.eventId === eventId)).toBe(true);
+    expect(result.events.some((row) => row.eventType === "crm.lead.created")).toBe(true);
   });
 });
