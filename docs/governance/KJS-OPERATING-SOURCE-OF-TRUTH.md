@@ -1,5 +1,5 @@
 # KJS Operating Source of Truth Ω
-**Versão:** 1.3.0  \
+**Versão:** 1.4.0  \
 **Status:** documento canônico de diretrizes operacionais  \
 **Branch de referência:** `feat/crm-kanban-evidence`
 
@@ -303,3 +303,109 @@ Conhecimento desta revisão deve ser compartilhado por handoff com ID, fonte/ver
 8. Implementar handoff e ACK individual dos quatro núcleos.
 9. Rotacionar credenciais reais encontradas nos arquivos `.env` e concluir baseline de segurança GitHub/e-mail.
 10. Não declarar 24/7, heartbeat, deploy ou certificação sem infraestrutura, execução observável e evidência correspondente.
+
+
+## 15. Reunião diária de contexto e diretrizes — 03/11/2026
+
+**Revisão:** 03/11/2026, 19:51 (America/Bahia).  
+**Regra de atualização:** esta seção supersede contagens, estados de CI e relações de branch anteriores quando houver divergência com os dados abaixo.  
+**Evidência:** consultas GitHub à branch, PR, commit, CI, diretórios e documentos listados nesta seção.
+
+### 15.1 Decisões executivas vigentes
+1. **KJS Cloud próprio:** desenvolver o plano de controle como software dentro do ecossistema e dos repositórios existentes. Não criar projeto/servidor paralelo e não presumir Render, Vercel ou outro host. KJS Cloud é arquitetura/produto, não prova de infraestrutura provisionada.
+2. **Separação de repositórios:** IMPRRSDOR concentra a implementação do produto; KAMILLO-4531 mantém Skills, governança e fonte operacional. A fonte canônica desta linha continua sendo este arquivo.
+3. **Preservação:** manter main intocada. Nenhum merge, publicação, deploy, provisionamento ou alteração de conta externa é autorizado por esta reunião.
+4. **Baseline técnico:** Node.js/Express e SQLite/WAL em instância única enquanto os gates iniciais são implementados. Não compartilhar o mesmo arquivo SQLite entre réplicas. PostgreSQL, Redis, pgvector, storage distribuído e provedores de compute só entram por necessidade mensurada e plano de migração/restore.
+5. **Aquisição:** operação corrente orgânica, baseada em conteúdo próprio. Mídia paga não entra no ciclo atual; qualquer experimento pago exige decisão e autorização específicas.
+6. **Fabricação própria:** marketplace de produtos e serviços KJS, sem white-label ou vendedores terceiros. Hotmart não é requisito de fabricação nem dependência do núcleo; eventual uso como canal de distribuição é decisão separada. Mercado Pago permanece descartado.
+7. **Produto inicial:** Biblioteca Awesome / 30 ferramentas IA, com isca gratuita e e-book de referência a R$ 29,99. O catálogo e as páginas estão documentados/versionados, mas checkout, cobrança, entrega automática por Drive/e-mail e trial controlado ainda não estão comprovados como operacionais.
+8. **Trial:** objetivo de sete dias sem cartão, com e-mail e WhatsApp; implementar controle de acesso, datas, status, consentimento e retenção mínima antes de declarar ativo.
+9. **Métricas:** clique UTM, lead, pedido, pagamento aprovado, reembolso e receita são eventos distintos. Clique não prova compra; receita só entra no ledger após confirmação de transação/webhook e reconciliação.
+10. **ROI 100x:** meta aspiracional. Não é previsão, garantia nem resultado até existir experimento com baseline, amostra, receita incremental atribuída, margem e custo total.
+
+### 15.2 Estado dos repositórios — revisão atualizada
+
+#### kamillosantos/KAMILLO-4531
+- Branch feat/crm-kanban-evidence: **47 commits à frente e 0 atrás de main** na comparação consultada.
+- HEAD: 4d8461f2582fb17c27d0392219cc7ea81e6aee5f.
+- PR #2: aberta, Draft, mergeable=true, base main; permanece sem merge por decisão explícita registrada no próprio PR.
+- GitHub Actions KJS CI run #36 para esse HEAD: completed / success. Job único confirmou instalação, ASTRA unit tests, typecheck, lint e build web aprovados.
+- Esse CI valida o commit consultado; não comprova deploy, health check público, integração externa ou operação em produção.
+- Não fazer merge integral apenas porque o CI está verde. Revisar o diff acumulado, manter main preservada e exigir autorização explícita.
+
+#### kamillosantos/IMPRRSDOR
+- main avançou para o commit e436127e329d63810c49f72eb32210435ec29f43, de 03/11/2026, que atualizou o README com a proposta Board Academy.
+- feat/kjs-cloud-core-foundation HEAD: 45d3a73de447e43ce1c4d20fea88794c4b3903fd.
+- Comparação Cloud vs main: **7 commits à frente e 1 atrás** (diverged). A contagem anterior de 7 à frente/0 atrás está superada.
+- Comparação Cloud vs feat/kjs-contextual-intelligence-engine: **6 commits à frente e 0 atrás**. A branch continua alinhada à sua base contextual, mas não à main atual.
+- A fundação contém o contrato de manifesto, validação de identidade/linhagem, escopo, permissões, quotas e teste negativo para versão semântica inválida. package.json define npm test como node --test.
+- O teste Node completo não foi executado/confirmado nesta revisão. A consulta de workflow associada ao commit não retornou run PR-triggered; CI da fundação permanece **não comprovado**.
+- Estado da fundação: IMPLEMENTATION_IN_PROGRESS / NOT_CERTIFIED. Não há evidência de workers, fila distribuída, scheduler, compute, secret store integrado, endpoint operacional, deploy ou heartbeat ativo.
+- feat/claude-agent-fleet: **37 à frente e 52 atrás de main**; PR #10 aberta, Draft, mergeable=false. Não fazer merge integral.
+- feat/cloud-agent-clones-v1: **10 à frente e 6 atrás de main**. Não promover como arquitetura canônica nem fazer merge integral.
+
+#### Mudanças e inconsistências documentais recentes
+- Commits de 01–02/11 adicionaram rotas UTM, tracking e ajustes do marketplace; o teste de serving teve correção de escapes regex em 8c54d6d7a9059810ce84ac9b30c031fde1951910.
+- O README atualizado em main apresenta a Board Academy como proposta pedagógica/estratégica, não como produto, UI ou agentes ativos. O README referencia docs/BOARD-ACADEMY-KJS-IMPERATOR-OMEGA.md, mas esse caminho não apareceu na listagem de main/docs consultada. Tratar como referência quebrada ou documento ainda não versionado; não declarar a Academy implementada.
+- O README de main ainda contém linguagem de produção configurada no Render; docs/FINAL-LAUNCH-GATES.md também cita render.yaml e armazenamento efêmero em /tmp/imperator.db. Isso conflita com a diretriz mais recente de não presumir Render/Vercel e construir o KJS Cloud como arquitetura própria. Revisar e reconciliar documentação/configuração em branch, sem apagar artefatos ou alterar main por suposição.
+
+### 15.3 Estado dos quatro núcleos
+| Núcleo | Estado comprovado nesta revisão | Diretriz |
+|---|---|---|
+| GPT KJS | Conectado nesta sessão; consultou e comparou repositórios, PRs, commits, CI e documentos; atualizou a fonte canônica. | Orquestração, engenharia, auditoria e handoff com evidência. |
+| Meta KJS | Papel e pesquisa da Meta Model API documentados; sem ACK de ingestão, credencial validada ou integração de runtime confirmada. | Separar Meta Model API, Meta AI, Marketing API, Instagram e WhatsApp; cada integração exige autorização e teste próprios. |
+| Gemini KJS | Papel documentado; sem ACK, conexão Google/Gemini ou execução externa confirmada. | Pesquisa e validação cruzada somente após handoff confirmado. |
+| Cloud Imperador Ω | Fonte canônica, manifesto e fundação de código consultáveis; sem runtime de coordenação, fila, workers, scheduler, memória distribuída ou telemetria contínua comprovados. | Avançar pelos gates G1–G7; replicação de agentes é controlada, limitada e sem herança automática de credenciais. |
+
+Nenhum núcleo externo é considerado sincronizado por receber um link. O estado de Meta e Gemini permanece SENT_NOT_CONFIRMED; Cloud runtime permanece NOT_VERIFIED.
+
+### 15.4 Produto, aquisição e dados — estado e riscos
+- docs/MVP-01-MARKETPLACE.md descreve páginas para vitrine, isca gratuita, e-book e privacidade. O próprio documento afirma que não há checkout ativo, cobrança configurada ou entrega automática por Google Drive/e-mail.
+- O MVP de tracking UTM mede criação de links e cliques agregados. Não implementa pixel, sessão, atribuição de conversão ou receita por campanha; não apresentar clique como venda.
+- A captura de leads usa o campo legado leads.email em texto simples. Criptografia AES-256 em repouso não está implementada; exige chave gerenciada, migração de dados e ajuste do CRM antes de ser declarada.
+- O KJS Perpetual Product Engine está documentado como utilitário determinístico de apoio à decisão. Não é integração autônoma de publicação, mídia, Meta AI, GeeLark, CRM, WhatsApp ou Hotmart.
+- VTSD e GeeLark são referências de pesquisa. Extrair princípios originais e testar em experimento orgânico pequeno; não copiar conteúdo nem automatizar spam, engajamento falso ou evasão de controles.
+- A especificação de lançamento exige banco persistente, backup/restore, processador de pagamento, webhook autenticado/idempotente, testes de pedido/reembolso e health check. Nenhum checkout ou transação real foi comprovado nesta revisão.
+
+### 15.5 Riscos prioritários
+| Nível | Risco | Evidência/efeito |
+|---|---|---|
+| P0 | Segredos em arquivos rastreados | Inventário anterior encontrou .env rastreados em data-genius-engine e insight-weaver. Rotacionar credenciais reais antes de remover tracking/histórico; não copiar valores para Git ou conversa. |
+| P0 | Cloud branch sem CI comprovado e 1 commit atrás de main | Executar testes, revisar o commit novo de main e atualizar a branch de forma controlada antes de promover. |
+| P1 | Dados pessoais de leads em texto simples | Definir chave gerenciada, migração, controle de acesso, retenção e teste de restauração antes de produção com dados de clientes. |
+| P1 | Contradição Render vs KJS Cloud próprio | README e launch gates mantêm referências específicas a Render; reconciliar documentação e arquivos de infraestrutura sem assumir host. |
+| P1 | Link da Board Academy não encontrado em main/docs | Corrigir a referência ou versionar o documento correto em branch revisável. |
+| P1 | Marketplace sem checkout/entrega | Selecionar processador e implementar webhook, ledger, reembolso, entrega e trial antes de aceitar clientes. |
+| P1 | Segurança administrativa incompleta | MFA/passkeys, branch protection, rulesets, secret scanning, push protection, sessões, OAuth e regras de e-mail não foram verificados em todas as contas/repositórios. |
+| P1 | Núcleos externos não confirmados | Meta e Gemini sem ACK; Copilot ↔ Meta Model API sem teste; Cloud runtime sem execução comprovada. |
+| P2 | Cadências e heartbeat não ativos | 8 minutos, 3 horas e 6 horas continuam requisitos até existir scheduler, execução observável e trilha de auditoria. |
+| P2 | Atribuição/ROI insuficientes | UTM mede clique; falta checkout reconciliado, margem, reembolso e atribuição de receita. |
+
+### 15.6 Pauta objetiva da reunião
+1. **Governança e escopo:** confirmar KJS Cloud próprio, fonte canônica, preservação de main e ausência de host presumido.
+2. **Engenharia:** decidir atualização controlada de feat/kjs-cloud-core-foundation, executar node --test e criar CI verificável.
+3. **Segurança e dados:** priorizar rotação dos segredos, proteção de e-mail/GitHub e tratamento seguro do e-mail de leads.
+4. **Produto e receita:** confirmar escopo orgânico, produto inicial, checkout, processador, trial e entrega digital.
+5. **Núcleos:** solicitar ACK individual com versão carregada, ferramentas e escopo; sem ACK, manter não sincronizado.
+6. **Observabilidade:** definir contratos de eventos, ledger, scheduler, quotas, retries, kill switch e critérios de produção.
+
+### 15.7 Decisões registradas e plano de execução
+**Decisões**
+- Não fazer merge nem deploy em main nesta reunião.
+- Não assumir Render, Vercel ou outro host; manter KJS Cloud provider-neutral.
+- Priorizar execução orgânica e fabricação própria; pagamento e distribuição são camadas separadas.
+- Não declarar checkout, entrega digital, trial, integração Meta/Gemini, runtime Cloud, heartbeat ou ROI sem testes e evidências correspondentes.
+- Corrigir divergências documentais em branch revisável; preservar histórico e artefatos existentes.
+
+**Plano**
+1. **P0 — Segredos:** identificar se os .env contêm credenciais reais; rotacionar primeiro; depois remover do tracking e tratar histórico/acessos.
+2. **P0 — Cloud:** reconciliar o commit de main e436127 com a branch Cloud; executar node --test, npm run check e CI completo; corrigir falhas antes de G1.
+3. **P1 — Privacidade:** desenhar migração segura para proteger leads.email, com secret manager, autorização, retenção e restore testado.
+4. **P1 — Documentação:** alinhar README/launch gates à decisão KJS Cloud sem host presumido e resolver o caminho da Board Academy.
+5. **P1 — Produto:** fechar contrato de pagamento, webhook, ledger, reembolso, trial e entrega por e-mail/Drive; testar transação e idempotência antes de produção.
+6. **P1 — Integrações:** validar Meta Model API ↔ Copilot em ambiente de teste; implementar handoff e ACK por núcleo.
+7. **P2 — Runtime:** concluir G1 identidade/linhagem, G2 control plane, G3 orquestração persistente, G4 execução isolada, G5 armazenamento, G6 observabilidade e G7 adaptadores de provedores.
+8. **P2 — Crescimento:** rodar experimento orgânico VTSD/GeeLark inspirado, com conteúdo próprio, baseline, amostra e stop rules; medir margem e resultado, não apenas alcance.
+9. **P3 — Escala:** somente após gates aprovados, ativar workers, scheduler, heartbeat e expansão limitada, com quotas, idempotência, custos, kill switch e auditoria.
+
+**Estado da reunião:** contexto consolidado e registrado. O registro documental não equivale a execução dos itens do plano, sincronização dos núcleos, alteração de main, deploy ou certificação de produção.
