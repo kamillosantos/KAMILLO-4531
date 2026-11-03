@@ -143,3 +143,24 @@ export const crmMessages = sqliteTable("crm_messages", {
     .notNull()
     .$defaultFn(() => new Date()),
 });
+
+
+// ── Data Genius — append-only operational event ledger ─────────────
+export const ecosystemEvents = sqliteTable("ecosystem_events", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  eventId: text("event_id").notNull().unique(),
+  eventType: text("event_type").notNull(),
+  schemaVersion: text("schema_version").notNull(),
+  occurredAt: text("occurred_at").notNull(),
+  sourceSystem: text("source_system").notNull(),
+  sourceComponent: text("source_component").notNull(),
+  sourceVersion: text("source_version").notNull(),
+  environment: text("environment").notNull(),
+  eventClass: text("event_class").notNull(),
+  correlationId: text("correlation_id").notNull(),
+  actorType: text("actor_type").notNull(),
+  actorId: text("actor_id").notNull(),
+  status: text("status").notNull(),
+  payloadJson: text("payload_json").notNull().default("{}"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});
