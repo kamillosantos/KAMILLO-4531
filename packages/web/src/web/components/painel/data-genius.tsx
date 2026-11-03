@@ -64,7 +64,7 @@ export function DataGenius() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 text-[#00f0ff]"><Activity className="h-5 w-5" /><h1 className="text-lg font-bold tracking-widest">DATA GENIUS · EVENT LEDGER</h1></div>
-          <p className="mt-1 text-xs text-[#78869a]">Registros persistidos no banco desta aplicação · atualização automática a cada 15s · sem fontes não instrumentadas.</p>
+          <p className="mt-1 text-xs text-[#78869a]">Registros persistidos · atualização automática a cada 15s · fontes sem telemetria permanecem identificadas separadamente.</p>
         </div>
         <button onClick={() => void load()} disabled={loading} className="flex items-center gap-2 rounded border border-[#263342] px-3 py-2 text-xs text-[#cbd5e1] hover:border-[#00f0ff] disabled:opacity-50">
           <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} /> Atualizar
@@ -100,7 +100,7 @@ export function DataGenius() {
           <tbody>
             {data?.events.map((event) => <tr key={event.eventId} className="border-t border-[#1f2937] text-[#d7e0ea]">
               <td className="whitespace-nowrap p-3 font-mono text-[#9aa8b8]">{event.occurredAt}</td>
-              <td className="p-3"><div className="font-semibold">{event.eventType}</div><div className="mt-1 text-[10px] text-[#78869a]">{event.eventId}</div></td>
+              <td className="p-3"><div className="font-semibold">{event.eventType}</div><div className="mt-1 text-[10px] text-[#78869a]">ID: {event.eventId}</div><div className="mt-1 text-[10px] text-[#78869a]">TRACE: {event.correlationId}</div></td>
               <td className="p-3">{event.sourceSystem}<div className="mt-1 text-[10px] text-[#78869a]">{event.sourceComponent}</div></td>
               <td className="p-3">{event.environment}<div className="mt-1 text-[10px] text-[#78869a]">{event.eventClass}</div></td>
               <td className="p-3">{event.status}</td>
