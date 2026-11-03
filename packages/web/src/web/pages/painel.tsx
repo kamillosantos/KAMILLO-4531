@@ -19,8 +19,9 @@ import { RevOps } from "../components/painel/revops";
 import { DevEngine } from "../components/painel/dev-engine";
 import { ImperatorMovie } from "../components/painel/imperator-movie";
 import { KjsCrm } from "../components/painel/kjs-crm";
+import { DataGenius } from "../components/painel/data-genius";
 
-type Tab = "b2b" | "b2c" | "robo" | "revops" | "dev" | "movie" | "crm";
+type Tab = "b2b" | "b2c" | "robo" | "revops" | "dev" | "movie" | "crm" | "data";
 
 const NAV: { id: Tab; label: string; icon: typeof Users; accent: string }[] = [
   { id: "b2b", label: "Demand Engine · B2B", icon: Users, accent: "#00f0ff" },
@@ -30,6 +31,7 @@ const NAV: { id: Tab; label: string; icon: typeof Users; accent: string }[] = [
   { id: "dev", label: "Dev Engine", icon: Code2, accent: "#00ff66" },
   { id: "movie", label: "Imperator Movie Ω", icon: Clapperboard, accent: "#00ff66" },
   { id: "crm", label: "CRM & Inbox Ω", icon: MessageSquare, accent: "#00f0ff" },
+  { id: "data", label: "Data Genius · Events", icon: Activity, accent: "#00f0ff" },
 ];
 
 export default function PainelPage() {
@@ -111,6 +113,7 @@ export default function PainelPage() {
           {tab === "dev" && <DevEngine />}
           {tab === "movie" && <ImperatorMovie />}
           {tab === "crm" && <KjsCrm />}
+          {tab === "data" && <DataGenius />}
         </main>
       </div>
     </div>
