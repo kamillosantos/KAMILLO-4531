@@ -30,7 +30,7 @@ jobs:
         run: bun run typecheck
       - name: Run event contract tests
         working-directory: packages/web
-        run: bun test src/api/observability/event-contract.test.ts
+        run: bun test src/api/observability/*.test.ts
       - name: Build web application
         working-directory: packages/web
         run: bun run build
