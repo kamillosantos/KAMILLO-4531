@@ -1,5 +1,7 @@
 import type { Hono } from "hono";
 import { createObservedEvent } from "./observability/event-contract";
+import { db } from "./database";
+import * as schema from "./database/schema";
 
 type CreativeBrief = {
   brief: string;
@@ -116,7 +118,16 @@ export function mountCreativeOrchestrator(app: Hono) {
     try {
       const plan = await callDirector(input, requestId);
       const operationalEvent = createObservedEvent({ event_type: "cinema.plan.created", source_component: "creative-orchestrator", correlation_id: requestId, status: "PLAN_READY_FOR_HUMAN_APPROVAL", actor_id: "creative-orchestrator", payload: { request_id: requestId, execution_scope: "PLANNING_ONLY" } });
-      console.info(JSON.stringify(operationalEvent));
+      await db.insert(schema.ecosystemEvents).values({
+        eventId: operationalEvent.event_id, eventType: operationalEvent.event_type,
+        schemaVersion: operationalEvent.schema_version, occurredAt: operationalEvent.occurred_at,
+        sourceSystem: operationalEvent.source_system, sourceComponent: operationalEvent.source_component,
+        sourceVersion: operationalEvent.source_version, environment: operationalEvent.environment,
+        eventClass: operationalEvent.event_class, correlationId: operationalEvent.correlation_id,
+        actorType: operationalEvent.actor_type, actorId: operationalEvent.actor_id,
+        status: operationalEvent.status, payloadJson: JSON.stringify(operationalEvent.payload || {}),
+      });
+      console.info(JSON.stringify({ event_id: operationalEvent.event_id, persisted: true, event_type: operationalEvent.event_type }));
       return c.json({
         request_id: requestId,
         status: "PLAN_READY_FOR_HUMAN_APPROVAL",
