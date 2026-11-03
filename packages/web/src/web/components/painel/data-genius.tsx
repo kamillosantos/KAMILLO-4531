@@ -100,7 +100,7 @@ export function DataGenius() {
       </div>
 
       {data?.integrations_not_instrumented?.length ? <div className="rounded border border-[#263342] bg-[#0d0f12] p-3">
-        <div className="mb-2 text-[10px] font-bold uppercase tracking-wider text-[#78869a]">Fontes ainda não instrumentadas neste painel</div>
+        <div className="mb-2 text-[10px] font-bold uppercase tracking-wider text-[#78869a]">Fontes externas a conectar e verificar</div>
         <div className="flex flex-wrap gap-2">{data.integrations_not_instrumented.map((item) => <span key={item} className="rounded bg-[#1a2029] px-2 py-1 text-[10px] text-[#aab6c5]">{item}</span>)}</div>
       </div> : null}
     </section>
