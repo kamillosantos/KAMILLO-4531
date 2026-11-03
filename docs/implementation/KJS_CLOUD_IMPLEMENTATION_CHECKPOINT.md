@@ -12,8 +12,8 @@
 4. **Orchestration — PARTIAL:** shared typed job state machine blocks illegal transitions, requires approval when configured and requires QA evidence before `SUCCEEDED`. Durable distributed queue/worker is not wired.
 5. **Agency LLM services — NOT CONNECTED:** current CRM remains deterministic/rule-based unless a real provider integration is independently verified.
 6. **Cinema — PARTIAL:** creative planning now emits a validated operational event with correlation ID. Rendering, upload, upscaling, audio mastering and final media QA are separate unimplemented stages.
-7. **Data Genius — PARTIAL:** typed event contract, persistent `ecosystem_events` ledger, authenticated cross-repository ingestion API, protected read API, protected readiness probe (`GET /api/observability/health`), 15-second panel refresh, and existing-panel UI tab added. The IMPRRSDOR outbox forwarder is implemented on its branch. SQL migration is committed but not applied to any live database; matching endpoint/token configuration is still required in both environments.
-8. **Verification — VERIFIED ON BRANCH:** Bun locked install, TypeScript typecheck, 7 observability/API integration tests and web build passed. Tests cover producer auth, duplicate delivery, protected query and readiness. The Bun server entrypoint exports the Hono app consumed by `src/__server.ts`.
+7. **Data Genius — PARTIAL:** typed event contract, persistent `ecosystem_events` ledger, authenticated cross-repository ingestion API, protected read API, protected readiness probe (`GET /api/observability/health`), 15-second panel refresh, and existing-panel UI tab added. The IMPRRSDOR outbox forwarder is implemented on its branch. CRM lead lifecycle, inbox conversation/message/handoff, manual checkout and verified payment-webhook outcomes now emit persisted operational events without storing contact PII in the event payload. SQL migration is committed but not applied to any live database; matching endpoint/token configuration is still required in both environments.
+8. **Verification — VERIFIED ON BRANCH:** Bun locked install, TypeScript typecheck, 8 observability/API integration tests and web build passed. Tests cover producer auth, duplicate delivery, protected query and readiness. The Bun server entrypoint exports the Hono app consumed by `src/__server.ts`.
 
 ## New files and changes
 - `packages/web/src/api/observability/event-contract.ts`
@@ -40,9 +40,9 @@ This does not claim compatibility with native provider webhook signatures. A pro
 
 - Bun locked install: PASSED.
 - Web TypeScript typecheck: PASSED.
-- Observability/API integration tests: PASSED (7 tests, 0 failures).
+- Observability/API integration tests: PASSED (8 tests, 0 failures).
 - Web production build: PASSED.
-- Workflow: https://github.com/kamillosantos/KAMILLO-4531/actions/runs/41699296099
+- Workflow: https://github.com/kamillosantos/KAMILLO-4531/actions/runs/41700685766
 
 ## Release boundary
 No deployment, provisioning, paid activation, schema migration, or production UI change was performed. No real provider, WhatsApp, CRM LLM, media renderer, or global event sink is certified as connected.
