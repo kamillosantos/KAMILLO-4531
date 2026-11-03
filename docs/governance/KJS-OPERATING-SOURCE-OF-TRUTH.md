@@ -1,5 +1,5 @@
 # KJS Operating Source of Truth Ω
-**Versão:** 1.2.0  \
+**Versão:** 1.3.0  \
 **Status:** documento canônico de diretrizes operacionais  \
 **Branch de referência:** `feat/crm-kanban-evidence`
 
@@ -228,3 +228,78 @@ Estados acima não são pontuação de capacidade dos modelos; representam somen
 
 ### 13.6 Próximo ciclo de trabalho
 A próxima execução deve começar pelo P0 de CI e pelo tratamento seguro dos segredos. Em paralelo, preparar a reconciliação do runtime sem tocar em `main`. O relatório seguinte deve comparar o HEAD, CI, ACKs dos núcleos, achados de segurança e evidência de runtime com este registro.
+
+
+## 14. Consolidação operacional — 03/11/2026
+
+### 14.1 Decisão vigente de infraestrutura KJS Cloud
+A decisão mais recente do operador é construir o **KJS Cloud como software e plano de controle próprio**, dentro da estrutura e do repositório existentes. Não presumir Render, Vercel ou outro provedor de hospedagem; não criar um novo projeto ou servidor; não duplicar a aplicação. O nome KJS Cloud descreve a arquitetura/produto e não comprova que servidores, domínio, conta de nuvem ou ambiente de produção estejam provisionados.
+
+- Repositório de implementação: `kamillosantos/IMPRRSDOR`.
+- Branch de trabalho: `feat/kjs-cloud-core-foundation`.
+- Branch-base de trabalho: `feat/kjs-contextual-intelligence-engine`.
+- A branch de Cloud foi comparada com `main`: 7 commits à frente, 0 atrás; `main` permanece intocada.
+- A branch está 6 commits à frente da branch-base contextual, 0 atrás.
+- Arquivos do primeiro corte: `docs/KJS-CLOUD-FOUNDATION.md`, `docs/KJS-CONTEXTUAL-INTELLIGENCE-ENGINE.md`, `src/cloud/agent-manifest.js`, `tests/cloud-agent-manifest.test.js`.
+- A fundação preserva Node.js/Express e SQLite/WAL como baseline de instância única; não autoriza compartilhar um arquivo SQLite entre réplicas horizontais.
+- A arquitetura separa control plane, identidade/linhagem, orquestração, execução isolada, memória/armazenamento, API interna, observabilidade e segurança.
+- A criação de manifestos-filhos é controlada: identidade e linhagem explícitas, escopo e permissões sem escalada, quotas e ciclo de vida. Não há herança automática de credenciais.
+- O primeiro corte não inicia workers, não cria fila distribuída, não provisiona compute, não chama provedores externos e não faz deploy.
+
+### 14.2 Correção de código e estado de validação
+Na revisão do manifesto de agentes foi identificado que `VERSION_PATTERN` usava escapes duplicados e rejeitava versões semânticas válidas. A expressão foi corrigida em `src/cloud/agent-manifest.js` e foi acrescentado teste negativo para versão inválida em `tests/cloud-agent-manifest.test.js`.
+
+- Commits da correção: `4134637b982133113f977ec6c8983b356d7b7b54` e `45d3a73de447e43ce1c4d20fea88794c4b3903fd`.
+- Smoke check local da expressão: aceitou `1.0.0` e `2.4.1-beta.1`; rejeitou `1.x.0`, `1.0` e `v1.0.0`.
+- Não há execuções de GitHub Actions registradas para `feat/kjs-cloud-core-foundation) nesta consulta. O teste Node completo, CI e integração ponta a ponta continuam pendentes.
+- Estado: `IMPLEMENTATION_IN_PROGRESS / NOT_CERTIFIED). Nenhum provisionamento, deploy ou operação de produção foi confirmado.
+
+### 14.3 Motor de Inteligência Contextual
+O documento `docs/KJS-CONTEXTUAL-INTELLIGENCE-ENGINE.md` é um blueprint aprovado, mas marca a implementação como não iniciada. A diretriz é reutilizar a aplicação Node/Express, tracking, event outbox/dispatcher, conteúdo, marketplace, CRM e governança existentes. PostgreSQL/pgvector, Redis, Next.js, migração TypeScript ou serviço Python só entram mediante necessidade mensurada, contrato e plano de migração/restore.
+
+O arquivo `KJS_FIX_BLOCO_UNICO.json` não foi localizado nas buscas realizadas em `IMPRRSDOR`, `KAMILLO-4531` e `-kamilosantosprotocol`, nem no caminho raiz consultado da branch de Cloud. Não recriar o arquivo por suposição; continuar a busca no repositório/branch correto antes de substituí-lo.
+
+### 14.4 Inteligência de referência: VTSD e GeeLark
+O canal indicado pelo operador foi identificado por busca vidIQ como **Método VTSD (@vtsd)**. Snapshot dinâmico consultado em 03/11/2026: aproximadamente 1,23 milhão de inscritos, 19,52 milhões de visualizações e 1.015 vídeos. A descrição pública posiciona o canal em copy, marketing, tendências, conteúdo, vendas e produtos digitais.
+
+A amostra de transcrições consultada incluiu vídeos sobre produto low-ticket, funil simples e copywriting. Aprendizados a testar — não a copiar como lei:
+- Produtos digitais de entrada tendem a ficar mais claros quando resolvem uma tarefa pequena, concreta e utilizável; formatos citados incluem e-books utilitários, planilhas, templates, prompts, agentes, micro-SaaS e acervos.
+- Começar com um fluxo de conversão simples reduz dependências e pontos de falha; adicionar complexidade apenas quando dados reais demonstrarem necessidade.
+- Copy deve priorizar linguagem simples, clareza, especificidade, corte de excesso e produção consistente.
+- Conteúdo e resultados de outros canais são referências de pesquisa, não prova de demanda, receita ou conversão para KJS.
+
+A plataforma GeeLark foi estudada somente como referência de padrões de produto: modelos de fluxo, sincronização de tarefas, RPA, API, biblioteca de ativos, permissões e logs. A adaptação KJS deve limitar-se a operações legítimas e autorizadas de produção, aprovação, agendamento e análise de conteúdo próprio. Não reproduzir mecanismos de evasão, manipulação de engajamento, spam ou contorno de controles das plataformas.
+
+O alvo de ROI 100x é aspiracional e não uma previsão ou garantia. Só poderá ser reportado como resultado após experimento com baseline, janela, amostra, receita incremental atribuída, margem e custo total medidos.
+
+### 14.5 Meta Model API e Copilot
+A documentação oficial atual da Meta descreve a Meta Model API como API de inferência para modelos Muse, com base `https://api.meta.ai/v1`, autenticação Bearer via `MODEL_API_KEY`, modelos como `muse-spark-1.3` e `muse-wonder-1.0`, além de superfícies Responses, Chat Completions e compatibilidade com SDKs OpenAI/Anthropic.
+
+Decisão conceitual reafirmada: **Meta Model API não é a memória pessoal do aplicativo Meta AI**. A API fornece inferência e recursos de estado próprios do fluxo de API; não transfere automaticamente histórico ou memória da aplicação de consumo. Copilot é ambiente/ferramenta de desenvolvimento, não provedor de hospedagem nem memória compartilhada. A integração específica Copilot ↔ Meta Model API permanece `NOT_VERIFIED` até teste de autenticação, modelo, streaming, tool calls, limites, custo e tratamento de erros. Chaves ficam fora do Git e da conversa.
+
+### 14.6 Estado dos núcleos e compartilhamento
+- **GPT KJS:** nesta revisão consultou GitHub, revisou branches/código, corrigiu a validação de versão do manifesto e pesquisou fontes de referência.
+- **Meta KJS:** papel documentado; sem ACK de recebimento ou execução externa confirmado nesta revisão.
+- **Gemini KJS:** papel documentado; sem ACK de recebimento ou execução externa confirmado nesta revisão.
+- **Cloud Imperador:** fonte de governança e branch de fundação consultáveis; não há evidência de runtime de coordenação, scheduler, workers, heartbeat ou telemetria contínua ativos.
+
+Conhecimento desta revisão deve ser compartilhado por handoff com ID, fonte/versão, objetivo, evidência, restrições, critério de aceite e ACK. Até o ACK de cada destinatário, o estado permanece `SENT_NOT_CONFIRMED`, não `SYNCED`.
+
+### 14.7 Estado adicional de governança e riscos
+- `KAMILLO-4531 / feat/crm-kanban-evidence`: 38 commits à frente e 0 atrás de `main). PR #2 permanece aberta, Draft e mergeable=true. O CI run #22 concluiu com sucesso no commit `d4d8c4f3c0ab42fab6c5debd7a69742aab1aad33`; ASTRA unit tests, typecheck, lint e build web passaram. Isso valida somente aquele commit/branch, não deploy ou produção.
+- `IMPRRSDOR / feat/claude-agent-fleet`: continua divergente de `main), 37 commits à frente e 51 atrás; PR #10 aberta, Draft e mergeable=false. Não fazer merge integral.
+- `IMPRRSDOR / feat/cloud-agent-clones-v1`: divergente, 10 commits à frente e 5 atrás de `main). Não promover o protótipo como arquitetura canônica.
+- Achados anteriores de arquivos `.env` rastreados em dois repositórios continuam pendentes de tratamento seguro. Credenciais reais devem ser rotacionadas antes de remoção do tracking/histórico.
+- Não há comprovação de hardening administrativo em todos os repositórios ou contas de e-mail.
+
+### 14.8 Próximas ações priorizadas
+1. Executar `node --test tests/cloud-agent-manifest.test.js` e integrar CI para a branch de fundação; registrar resultado e corrigir qualquer falha.
+2. Revisar compatibilidade e segurança da fundação contra os módulos existentes antes de implementar registry persistente.
+3. Implementar G1 identidade/linhagem; depois G2 control plane; só então G3 orquestração persistente, idempotência, retries e cancelamento.
+4. Manter compute/storage/provider adapters como interfaces; nenhum fornecedor externo deve ser assumido.
+5. Auditar o local correto de `KJS_FIX_BLOCO_UNICO.json` antes de qualquer alteração.
+6. Converter os aprendizados VTSD/GeeLark em um experimento orgânico pequeno, com conteúdo próprio, aprovação humana e telemetria real.
+7. Validar a integração Copilot/Meta Model API em ambiente de teste, sem expor `MODEL_API_KEY`.
+8. Implementar handoff e ACK individual dos quatro núcleos.
+9. Rotacionar credenciais reais encontradas nos arquivos `.env` e concluir baseline de segurança GitHub/e-mail.
+10. Não declarar 24/7, heartbeat, deploy ou certificação sem infraestrutura, execução observável e evidência correspondente.
