@@ -1,0 +1,36 @@
+{
+  "manifest_version": "1.0.0",
+  "project": "KJS IMPERATOR Ω",
+  "repository": "KAMILLO-4531",
+  "branch": "feat/kjs-ecosystem-consolidation",
+  "status": "IMPLEMENTATION_IN_PROGRESS",
+  "source_of_truth": {
+    "architecture": "docs/architecture/KJS_ECOSYSTEM_INTEGRATION_CONTRACT.md",
+    "research": "docs/research/KJS_FUTURE_ENGINEERING_RESEARCH_CONTEXT.md",
+    "cinema_skill": "docs/skills/KJS_IMPERATOR_CINEMATIC_MASTER.md"
+  },
+  "repository_boundary": {
+    "control_plane": "kamillosantos/IMPRRSDOR",
+    "application_plane": "kamillosantos/KAMILLO-4531",
+    "integration": "versioned_authenticated_contracts",
+    "prohibited": ["blind_repository_merge", "unapproved_second_primary_database", "unapproved_hosting_stack"]
+  },
+  "frontend_protection": {
+    "policy": "PRESERVE_APPROVED_DESIGN",
+    "functional_fix_scope": "smallest_required_component_and_direct_dependencies",
+    "unrelated_layout_or_style_changes": "REQUIRE_EXPLICIT_OWNER_APPROVAL",
+    "visual_baseline": "NOT_ESTABLISHED_IN_THIS_COMMIT",
+    "design_tokens": "reuse_existing_tokens_only; do_not_invent_or_rewrite"
+  },
+  "execution_truth": {
+    "external_integrations": "must_be_verified_per_provider",
+    "queued_is_completed": false,
+    "planned_is_observed": false,
+    "production_metric_event": "OBSERVED_ONLY",
+    "release_state": "NOT_CERTIFIED"
+  },
+  "human_gates": [
+    "production_release", "paid_spend", "external_provisioning",
+    "outbound_campaigns", "destructive_repository_changes"
+  ]
+}

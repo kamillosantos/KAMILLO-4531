@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, real, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 // ── Institutional site + CRM (B2B Belgos AI Kanban) ────────────────
 // `leads` powers both the public site capture (quiz/garimpo/contact) and
@@ -33,18 +33,22 @@ export const leads = sqliteTable("leads", {
 export const checkouts = sqliteTable("checkouts", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   gateway: text("gateway").notNull(),
+  transactionId: text("transaction_id"),
   product: text("product").notNull(),
   offerType: text("offer_type").notNull().default("main"),
   buyerName: text("buyer_name"),
   buyerEmail: text("buyer_email"),
   amount: real("amount").notNull().default(0),
   currency: text("currency").notNull().default("BRL"),
-  status: text("status").notNull().default("approved"),
+  status: text("status").notNull().default("pending"),
   idempotencyKey: text("idempotency_key").unique(),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
-});
+}, (table) => ({
+  gatewayTransactionUnique: uniqueIndex("checkouts_gateway_transaction_id_uq")
+    .on(table.gateway, table.transactionId),
+}));
 
 // ── RevOps / Neural bidding governance ─────────────────────────────
 export const campaigns = sqliteTable("campaigns", {
@@ -111,4 +115,56 @@ export const devEngineRuns = sqliteTable("dev_engine_runs", {
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
+});
+
+
+// ── KJS CRM Inbox — persistent conversations and message history ───
+export const crmConversations = sqliteTable("crm_conversations", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  contactName: text("contact_name").notNull(),
+  contact: text("contact").notNull(),
+  channel: text("channel").notNull().default("web"),
+  consentRecorded: integer("consent_recorded", { mode: "boolean" }).notNull().default(false),
+  status: text("status").notNull().default("bot"),
+  assignedTo: text("assigned_to"),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
+export const crmMessages = sqliteTable("crm_messages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  conversationId: integer("conversation_id")
+    .notNull()
+    .references(() => crmConversations.id, { onDelete: "cascade" }),
+  direction: text("direction").notNull(),
+  senderType: text("sender_type").notNull(),
+  content: text("content").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
+
+// ── Data Genius — append-only operational event ledger ─────────────
+export const ecosystemEvents = sqliteTable("ecosystem_events", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  eventId: text("event_id").notNull().unique(),
+  eventType: text("event_type").notNull(),
+  schemaVersion: text("schema_version").notNull(),
+  occurredAt: text("occurred_at").notNull(),
+  sourceSystem: text("source_system").notNull(),
+  sourceComponent: text("source_component").notNull(),
+  sourceVersion: text("source_version").notNull(),
+  environment: text("environment").notNull(),
+  eventClass: text("event_class").notNull(),
+  correlationId: text("correlation_id").notNull(),
+  actorType: text("actor_type").notNull(),
+  actorId: text("actor_id").notNull(),
+  status: text("status").notNull(),
+  payloadJson: text("payload_json").notNull().default("{}"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });

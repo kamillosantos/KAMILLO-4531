@@ -1,0 +1,36 @@
+name: KJS Cloud — Branch Verification
+
+on:
+  push:
+    branches: [main, feat/kjs-ecosystem-consolidation]
+  pull_request:
+    branches: [main, feat/kjs-ecosystem-consolidation]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kjs-cloud-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+      - name: Typecheck web application
+        working-directory: packages/web
+        run: bun run typecheck
+      - name: Run event contract tests
+        working-directory: packages/web
+        run: bun test src/api/observability/*.test.ts
+      - name: Build web application
+        working-directory: packages/web
+        run: bun run build
