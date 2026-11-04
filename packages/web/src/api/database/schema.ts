@@ -50,6 +50,17 @@ export const campaigns = sqliteTable("campaigns", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 
+// ── Consent receipts for first-party analytics ─────────────────────
+export const consentReceipts = sqliteTable("consent_receipts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  receiptId: text("receipt_id").notNull().unique(),
+  state: text("state").notNull(),
+  purposes: text("purposes").notNull().default("[]"),
+  noticeVersion: text("notice_version").notNull(),
+  capturedAt: integer("captured_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  withdrawnAt: integer("withdrawn_at", { mode: "timestamp" }),
+});
+
 // ── First-party analytics events (consent-aware, PII-free) ─────────
 export const analyticsEvents = sqliteTable("analytics_events", {
   id: integer("id").primaryKey({ autoIncrement: true }),
