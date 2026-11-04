@@ -96,3 +96,22 @@ Every Skill must have an owner, version, inputs, outputs, permissions, data clas
 ## 10. Current certification state
 
 Architecture documentation only. No claim of live tracking, active prospecting, sales automation, production deployment, revenue, ROAS, mobile release or browser instrumentation is made by this commit. Certification remains NOT_CERTIFIED until evidence for each release gate is attached.
+
+## 11. Beta implementation added to this branch
+
+The beta branch now includes:
+- `analytics_events` ledger with unique event IDs for idempotent ingestion.
+- `consent_receipts` ledger recording consent state, purposes, notice version and capture time.
+- `analytics.recordConsent` procedure to record a decision and issue a server-generated receipt ID; withdrawal updates the referenced receipt.
+- `analytics.ingest` procedure that requires an active granted receipt and verifies that submitted purposes are covered by that receipt.
+- Strict input schemas that reject unknown properties, reducing the risk of accidentally sending contact details or unrelated device data.
+
+Important limitations:
+- The client consent interface is not yet wired to these procedures.
+- The new tables require a database schema migration/push before runtime use.
+- No authentication/authorization policy for analytics reporting has been added; no public aggregate/reporting endpoint is exposed in this beta.
+- Consent receipt validation is a server-side gate, but the production UI, notice text, proof of user action, withdrawal UX, retention schedule and legal review remain release requirements.
+- Rate limiting, abuse controls, monitoring and automated integration tests remain pending.
+- This code does not collect GPS, telecom, satellite, radio, VPN or covert fingerprinting data.
+
+The branch remains beta and NOT_CERTIFIED until build, migration, automated tests, consent UX and end-to-end verification pass.
