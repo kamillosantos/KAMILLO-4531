@@ -8,6 +8,7 @@ import { campaigns } from "./routes/campaigns";
 import { preflight } from "./routes/preflight";
 import { audit } from "./routes/audit";
 import { devEngine } from "./routes/dev-engine";
+import { analytics } from "./routes/analytics";
 import { db } from "./database";
 import * as schema from "./database/schema";
 
@@ -26,6 +27,7 @@ export const router = {
   preflight,
   audit,
   devEngine,
+  analytics,
 };
 
 export type AppRouter = typeof router;
