@@ -4,31 +4,106 @@
   "title": "KJS Growth OS Event Envelope",
   "type": "object",
   "additionalProperties": false,
-  "required": ["event_id", "event_name", "occurred_at", "environment", "source", "schema_version"],
+  "required": [
+    "event_id",
+    "event_name",
+    "occurred_at",
+    "environment",
+    "source",
+    "schema_version",
+    "consent_receipt_id",
+    "consent_purpose"
+  ],
   "properties": {
-    "event_id": { "type": "string", "minLength": 8, "maxLength": 128 },
-    "event_name": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,63}$" },
-    "occurred_at": { "type": "string", "format": "date-time" },
-    "environment": { "enum": ["development", "staging", "production"] },
-    "source": { "enum": ["web", "mobile", "server", "import"] },
-    "anonymous_id": { "type": "string", "maxLength": 128 },
-    "subject_id": { "type": "string", "maxLength": 128 },
-    "offer_id": { "type": "string", "maxLength": 128 },
-    "asset_id": { "type": "string", "maxLength": 128 },
-    "consent_state": { "enum": ["granted", "denied", "withdrawn", "not_required", "unknown"] },
-    "consent_purpose": { "type": "array", "items": { "type": "string", "maxLength": 64 }, "uniqueItems": true },
+    "event_id": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "event_name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,63}$"
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "environment": {
+      "enum": [
+        "development",
+        "staging",
+        "production"
+      ]
+    },
+    "source": {
+      "enum": [
+        "web",
+        "mobile",
+        "server",
+        "import"
+      ]
+    },
+    "anonymous_id": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "subject_id": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "offer_id": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "asset_id": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "consent_purpose": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 64
+      },
+      "uniqueItems": true
+    },
     "attribution": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "utm_source": { "type": "string", "maxLength": 256 },
-        "utm_medium": { "type": "string", "maxLength": 256 },
-        "utm_campaign": { "type": "string", "maxLength": 256 },
-        "utm_content": { "type": "string", "maxLength": 256 },
-        "utm_term": { "type": "string", "maxLength": 256 },
-        "referrer_host": { "type": "string", "maxLength": 256 }
+        "utm_source": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "utm_medium": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "utm_campaign": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "utm_content": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "utm_term": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "referrer_host": {
+          "type": "string",
+          "maxLength": 256
+        }
       }
     },
-    "schema_version": { "const": "1.0.0" }
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "consent_receipt_id": {
+      "type": "string",
+      "minLength": 16,
+      "maxLength": 128
+    }
   }
 }
